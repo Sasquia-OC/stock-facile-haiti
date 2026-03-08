@@ -23,7 +23,7 @@ function formatHTG(amount: number) {
 const Index = () => {
   const {
     products, productStats, addProduct, updateProduct, deleteProduct,
-    capitalInvesti, valeurStock, beneficeEstime, plusRentable, aSurveiller, critiques,
+    capitalInvesti, valeurStock, beneficeEstime, plusRentable, aSurveiller, critiques, stockHistory,
   } = useProducts();
 
   const { sales, addSale, gainsDuJour, clientsDuJour } = useSales();
