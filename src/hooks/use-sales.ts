@@ -1,17 +1,28 @@
 import { useState, useEffect, useMemo } from "react";
 import { Sale } from "@/types/product";
+import { useAuth } from "@/hooks/use-auth";
 
-const SALES_KEY = "biznis-pam-sales";
+const BASE_SALES_KEY = "biznis-pam-sales";
 
 export function useSales() {
+  const { user } = useAuth();
+  const userId = user?.id;
+  const SALES_KEY = userId ? `${BASE_SALES_KEY}-${userId}` : BASE_SALES_KEY;
+
   const [sales, setSales] = useState<Sale[]>(() => {
     const stored = localStorage.getItem(SALES_KEY);
     return stored ? JSON.parse(stored) : [];
   });
 
+  // Re-load when user changes
+  useEffect(() => {
+    const stored = localStorage.getItem(SALES_KEY);
+    setSales(stored ? JSON.parse(stored) : []);
+  }, [SALES_KEY]);
+
   useEffect(() => {
     localStorage.setItem(SALES_KEY, JSON.stringify(sales));
-  }, [sales]);
+  }, [sales, SALES_KEY]);
 
   const addSale = (sale: Omit<Sale, "id" | "date">) => {
     const newSale: Sale = {

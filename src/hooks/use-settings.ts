@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { AppSettings, Language } from "@/types/product";
 
-const SETTINGS_KEY = "biznis-pam-settings";
+const BASE_SETTINGS_KEY = "biznis-pam-settings";
 
 const DEFAULT_SETTINGS: AppSettings = {
   language: "fr",
-  tauxDollar: 132, // approximate HTG/USD rate
+  tauxDollar: 132,
 };
 
 const translations: Record<string, Record<Language, string>> = {
@@ -71,7 +71,6 @@ const translations: Record<string, Record<Language, string>> = {
   "restock": { fr: "Réapprovisionner", ht: "Ranpli stòk" },
   "details": { fr: "Détails", ht: "Detay" },
   "delete": { fr: "Supprimer", ht: "Efase" },
-  // Auth page
   "auth_welcome_title": { fr: "Bienvenue sur Ayiti Biznis !", ht: "Byenvini sou Ayiti Biznis !" },
   "auth_welcome_desc": { fr: "Gérez votre commerce — stock, ventes et bénéfices.", ht: "Jere komès ou pi byen — stòk, vant ak benefis." },
   "auth_login_title": { fr: "Connexion", ht: "Konekte" },
@@ -108,13 +107,14 @@ const translations: Record<string, Record<Language, string>> = {
 };
 
 export function useSettings() {
+  // Settings are shared (language/theme preference), not user-scoped
   const [settings, setSettings] = useState<AppSettings>(() => {
-    const stored = localStorage.getItem(SETTINGS_KEY);
+    const stored = localStorage.getItem(BASE_SETTINGS_KEY);
     return stored ? { ...DEFAULT_SETTINGS, ...JSON.parse(stored) } : DEFAULT_SETTINGS;
   });
 
   useEffect(() => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    localStorage.setItem(BASE_SETTINGS_KEY, JSON.stringify(settings));
   }, [settings]);
 
   const t = useCallback(

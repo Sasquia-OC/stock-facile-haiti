@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Product } from "@/types/product";
+import { useAuth } from "@/hooks/use-auth";
 
-const STORAGE_KEY = "stock-haiti-products";
-const HISTORY_KEY = "stock-haiti-value-history";
+const BASE_STORAGE_KEY = "stock-haiti-products";
+const BASE_HISTORY_KEY = "stock-haiti-value-history";
 
 const MOCK_PRODUCTS: Product[] = [
   {
@@ -53,6 +54,11 @@ const MOCK_PRODUCTS: Product[] = [
 ];
 
 export function useProducts() {
+  const { user } = useAuth();
+  const userId = user?.id;
+  const STORAGE_KEY = userId ? `${BASE_STORAGE_KEY}-${userId}` : BASE_STORAGE_KEY;
+  const HISTORY_KEY = userId ? `${BASE_HISTORY_KEY}-${userId}` : BASE_HISTORY_KEY;
+
   const [products, setProducts] = useState<Product[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -62,9 +68,20 @@ export function useProducts() {
     return MOCK_PRODUCTS;
   });
 
+  // Re-load when user changes
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setProducts(parsed.length > 0 ? parsed : MOCK_PRODUCTS);
+    } else {
+      setProducts(MOCK_PRODUCTS);
+    }
+  }, [STORAGE_KEY]);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-  }, [products]);
+  }, [products, STORAGE_KEY]);
 
   // Track daily stock value history (last 7 days)
   const valeurStockCurrent = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
@@ -75,6 +92,11 @@ export function useProducts() {
   });
 
   useEffect(() => {
+    const stored = localStorage.getItem(HISTORY_KEY);
+    setStockHistory(stored ? JSON.parse(stored) : []);
+  }, [HISTORY_KEY]);
+
+  useEffect(() => {
     const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
     setStockHistory((prev) => {
       const filtered = prev.filter((e) => e.date !== today);
@@ -82,7 +104,7 @@ export function useProducts() {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
       return updated;
     });
-  }, [valeurStockCurrent]);
+  }, [valeurStockCurrent, HISTORY_KEY]);
 
   const addProduct = (product: Omit<Product, "id" | "dateAjout">) => {
     const newProduct: Product = {
@@ -113,7 +135,6 @@ export function useProducts() {
   );
   const beneficeEstime = valeurStock - capitalInvesti;
 
-  // Smart indicators
   const productStats = useMemo(() => {
     return products.map((p) => ({
       ...p,
@@ -136,7 +157,6 @@ export function useProducts() {
 
   const aSurveiller = useMemo(() => {
     if (critiques.length === 0) return null;
-    // Product to watch = critical product with highest potential profit
     const critiqueStats = critiques.map((p) => ({
       ...p,
       beneficePotentiel: (p.prixVente - p.prixAchat) * p.quantite,
