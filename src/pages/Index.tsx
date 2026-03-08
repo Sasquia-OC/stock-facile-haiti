@@ -74,6 +74,21 @@ const Index = () => {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-5 space-y-5">
+        {/* Bannière de bienvenue dashboard */}
+        {activeTab === "dashboard" && (
+          <div className="rounded-2xl overflow-hidden shadow-md">
+            <div className="relative bg-gradient-to-r from-[hsl(216,100%,29%)] via-[hsl(216,100%,22%)] to-[hsl(352,80%,45%)] px-5 py-4 flex items-center gap-4">
+              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_70%)]" />
+              <div className="relative z-10 rounded-lg bg-white/95 p-1.5 shadow-sm shrink-0">
+                <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-9 w-9 object-contain" />
+              </div>
+              <div className="relative z-10 min-w-0">
+                <h2 className="text-base font-bold text-white truncate">{t("auth_welcome_title")}</h2>
+                <p className="text-xs text-white/75 truncate">{t("auth_welcome_desc")}</p>
+              </div>
+            </div>
+          </div>
+        )}
         {/* ── ONBOARDING (new user, no products) ── */}
         {products.length === 0 && activeTab === "dashboard" && (
           <div className="space-y-5">
