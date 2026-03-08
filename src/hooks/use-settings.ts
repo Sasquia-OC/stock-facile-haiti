@@ -9,7 +9,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 };
 
 const translations: Record<string, Record<Language, string>> = {
-  "dashboard": { fr: "Tableau de bord", ht: "Tablo" },
+  "dashboard": { fr: "Dashboard", ht: "Tablo" },
   "gains_today": { fr: "Gains du jour", ht: "Lajan jodi a" },
   "clients_today": { fr: "Clients du jour", ht: "Kliyan jodi a" },
   "to_restock": { fr: "À racheter", ht: "Pou rachte" },
@@ -62,6 +62,13 @@ const translations: Record<string, Record<Language, string>> = {
   "select_product": { fr: "Sélectionner un produit", ht: "Chwazi yon pwodui" },
   "qty_to_sell": { fr: "Quantité à vendre", ht: "Kantite pou vann" },
   "added_to_stock": { fr: "ajouté au stock !", ht: "ajoute nan stòk !" },
+  "all_clear": { fr: "Tout est sous contrôle", ht: "Tout anba kontwòl" },
+  "all_clear_desc": { fr: "Aucun produit en rupture ou en stock bas", ht: "Pa gen pwodui ki fini oubyen ki ba" },
+  "stockout_alert": { fr: "Ruptures de stock", ht: "Pwodui ki fini" },
+  "low_stock_alert": { fr: "Stocks bas", ht: "Stòk ba" },
+  "restock": { fr: "Réapprovisionner", ht: "Re-achte" },
+  "details": { fr: "Détails", ht: "Detay" },
+  "delete": { fr: "Supprimer", ht: "Efase" },
 };
 
 export function useSettings() {

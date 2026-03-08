@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Product } from "@/types/product";
-import { AlertTriangle, Trash2, Minus, Plus } from "lucide-react";
+import { AlertTriangle, Trash2, Minus, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ProductWithStats extends Product {
@@ -26,6 +27,8 @@ function getStockStatus(product: Product) {
 }
 
 export function ProductList({ products, onUpdate, onDelete, t }: ProductListProps) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
   if (products.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -39,10 +42,11 @@ export function ProductList({ products, onUpdate, onDelete, t }: ProductListProp
     <div className="space-y-2">
       {products.map((product) => {
         const status = getStockStatus(product);
+        const isExpanded = expanded === product.id;
         return (
           <div
             key={product.id}
-            className={`rounded-xl border p-4 bg-card transition-colors ${
+            className={`rounded-xl border p-3 sm:p-4 bg-card transition-colors ${
               status === "rupture"
                 ? "border-destructive/50 bg-destructive/5"
                 : status === "alerte"
@@ -50,31 +54,68 @@ export function ProductList({ products, onUpdate, onDelete, t }: ProductListProp
                 : ""
             }`}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`shrink-0 h-2.5 w-2.5 rounded-full ${
-                      status === "rupture"
-                        ? "bg-destructive"
-                        : status === "alerte"
-                        ? "bg-warning"
-                        : "bg-success"
-                    }`}
-                  />
-                  <h3 className="font-semibold text-sm truncate">{product.nom}</h3>
-                  {status === "rupture" && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">
-                      <AlertTriangle className="h-3 w-3" /> {t("stockout")}
-                    </span>
-                  )}
-                  {status === "alerte" && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-warning text-warning-foreground">
-                      <AlertTriangle className="h-3 w-3" /> {t("low")}
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted-foreground">
+            {/* Main row: always visible */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span
+                  className={`shrink-0 h-2.5 w-2.5 rounded-full ${
+                    status === "rupture"
+                      ? "bg-destructive"
+                      : status === "alerte"
+                      ? "bg-warning"
+                      : "bg-success"
+                  }`}
+                />
+                <h3 className="font-semibold text-sm truncate">{product.nom}</h3>
+                {status === "rupture" && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground">
+                    <AlertTriangle className="h-3 w-3" /> {t("stockout")}
+                  </span>
+                )}
+                {status === "alerte" && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-warning text-warning-foreground">
+                    <AlertTriangle className="h-3 w-3" /> {t("low")}
+                  </span>
+                )}
+              </div>
+
+              {/* Quantity controls */}
+              <div className="flex items-center gap-1 shrink-0">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 sm:h-10 sm:w-10"
+                  onClick={() => onUpdate(product.id, { quantite: Math.max(0, product.quantite - 1) })}
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </Button>
+                <span className="w-8 sm:w-10 text-center font-bold text-sm tabular-nums">
+                  {product.quantite}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 sm:h-10 sm:w-10"
+                  onClick={() => onUpdate(product.id, { quantite: product.quantite + 1 })}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Expand toggle for details (mobile-friendly) */}
+            <button
+              onClick={() => setExpanded(isExpanded ? null : product.id)}
+              className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1.5 hover:text-foreground transition-colors"
+            >
+              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              {isExpanded ? t("close") : t("details")}
+            </button>
+
+            {/* Expanded details */}
+            {isExpanded && (
+              <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                   <span>{t("buy")}: {formatHTG(product.prixAchat)}</span>
                   <span>{t("sell")}: {formatHTG(product.prixVente)}</span>
                   <span className="text-success font-medium">
@@ -82,41 +123,23 @@ export function ProductList({ products, onUpdate, onDelete, t }: ProductListProp
                   </span>
                 </div>
                 {product.beneficePotentiel > 0 && (
-                  <p className="text-[11px] text-muted-foreground mt-1">
+                  <p className="text-[11px] text-muted-foreground">
                     {t("potential_profit")}: <span className="font-semibold text-success">{formatHTG(product.beneficePotentiel)}</span>
                   </p>
                 )}
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 text-xs text-muted-foreground hover:text-destructive gap-1"
+                    onClick={() => onDelete(product.id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {t("delete")}
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10"
-                  onClick={() => onUpdate(product.id, { quantite: Math.max(0, product.quantite - 1) })}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="w-10 text-center font-bold text-sm tabular-nums">
-                  {product.quantite}
-                </span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10"
-                  onClick={() => onUpdate(product.id, { quantite: product.quantite + 1 })}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-10 w-10 text-muted-foreground hover:text-destructive"
-                  onClick={() => onDelete(product.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
         );
       })}
