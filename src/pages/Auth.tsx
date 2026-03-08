@@ -46,15 +46,32 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center space-y-3">
-          <div className="mx-auto w-fit rounded-2xl bg-white dark:bg-white/95 p-3 shadow-sm">
-            <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-14 w-14 object-contain" />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+      {/* Bannière de bienvenue */}
+      <div className="w-full max-w-sm mb-6 rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative bg-gradient-to-r from-[hsl(216,100%,29%)] via-[hsl(216,100%,22%)] to-[hsl(352,80%,45%)] p-6 text-center">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_70%)]" />
+          <div className="relative z-10 space-y-2">
+            <div className="mx-auto w-fit rounded-xl bg-white/95 p-2.5 shadow-md">
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-12 w-12 object-contain" />
+            </div>
+            <h2 className="text-xl font-bold text-white tracking-tight">
+              Byenveni sou Ayiti Biznis!
+            </h2>
+            <p className="text-sm text-white/80">
+              Jere biznis ou pi byen — stòk, vant ak benefis.
+            </p>
           </div>
-          <CardTitle className="text-xl">Ayiti Biznis</CardTitle>
+        </div>
+      </div>
+
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center space-y-1 pt-5 pb-3">
+          <CardTitle className="text-lg">
+            {isLogin ? "Konekte ou" : "Kreye kont ou"}
+          </CardTitle>
           <CardDescription>
-            {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
+            {isLogin ? "Antre email ak modpas ou" : "Enskri gratis pou kòmanse"}
           </CardDescription>
         </CardHeader>
         <CardContent>
