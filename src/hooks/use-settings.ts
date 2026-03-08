@@ -87,6 +87,12 @@ const translations: Record<string, Record<Language, string>> = {
   "auth_signup_success": { fr: "Inscription réussie !", ht: "Enskripsyon reyisi !" },
   "auth_signup_check_email": { fr: "Vérifiez votre email pour confirmer votre compte.", ht: "Tcheke imèl ou pou konfime kont ou." },
   "auth_error": { fr: "Erreur", ht: "Erè" },
+  "feedback_title": { fr: "Votre avis compte !", ht: "Opinyon ou enpòtan !" },
+  "feedback_desc": { fr: "Comment trouvez-vous l'application ?", ht: "Kijan ou jwenn aplikasyon an ?" },
+  "feedback_comment": { fr: "Un commentaire ? (optionnel)", ht: "Yon kòmantè ? (opsyonèl)" },
+  "feedback_send": { fr: "Envoyer", ht: "Voye" },
+  "feedback_thanks": { fr: "Merci pour votre avis !", ht: "Mèsi pou opinyon ou !" },
+  "feedback_sent": { fr: "Feedback envoyé", ht: "Feedback voye" },
 };
 
 export function useSettings() {
