@@ -37,6 +37,7 @@ const Index = () => {
 
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+  const [showReports, setShowReports] = useState(false);
 
   const filteredStats = useMemo(() => {
     if (!search.trim()) return productStats;
