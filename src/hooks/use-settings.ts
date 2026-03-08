@@ -9,7 +9,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 };
 
 const translations: Record<string, Record<Language, string>> = {
-  "dashboard": { fr: "Tableau de bord", ht: "Tablo" },
+  "dashboard": { fr: "Dashboard", ht: "Tablo" },
   "gains_today": { fr: "Gains du jour", ht: "Lajan jodi a" },
   "clients_today": { fr: "Clients du jour", ht: "Kliyan jodi a" },
   "to_restock": { fr: "À racheter", ht: "Pou rachte" },
