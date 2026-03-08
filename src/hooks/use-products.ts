@@ -66,6 +66,24 @@ export function useProducts() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
   }, [products]);
 
+  // Track daily stock value history (last 7 days)
+  const valeurStockCurrent = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
+
+  const [stockHistory, setStockHistory] = useState<{ date: string; value: number }[]>(() => {
+    const stored = localStorage.getItem(HISTORY_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  useEffect(() => {
+    const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+    setStockHistory((prev) => {
+      const filtered = prev.filter((e) => e.date !== today);
+      const updated = [...filtered, { date: today, value: valeurStockCurrent }].slice(-7);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, [valeurStockCurrent]);
+
   const addProduct = (product: Omit<Product, "id" | "dateAjout">) => {
     const newProduct: Product = {
       ...product,
