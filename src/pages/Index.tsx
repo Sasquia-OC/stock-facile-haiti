@@ -232,6 +232,11 @@ const Index = () => {
         )}
       </main>
 
+      {/* Footer */}
+      <footer className="max-w-lg mx-auto px-4 pb-20 pt-4 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} Creovate. Tous droits réservés.
+      </footer>
+
       {/* Bottom Navigation */}
       <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} />
     </div>
