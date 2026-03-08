@@ -171,9 +171,6 @@ const Index = () => {
             {/* 4. ANALYSE — IA + Smart Indicators */}
             <AiAssistant products={products} sales={sales} language={settings.language} t={t} />
 
-            {/* 5. FEEDBACK */}
-            <FeedbackSection t={t} />
-
             {(plusRentable || aSurveiller) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {plusRentable && (
@@ -198,6 +195,9 @@ const Index = () => {
                 )}
               </div>
             )}
+
+            {/* 5. FEEDBACK — dernière section */}
+            <FeedbackSection t={t} />
           </>
         )}
 
