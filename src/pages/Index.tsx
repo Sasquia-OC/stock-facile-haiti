@@ -12,6 +12,7 @@ import { SalesModule } from "@/components/SalesModule";
 import { AiAssistant } from "@/components/AiAssistant";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BottomNav, TabId } from "@/components/BottomNav";
+import { StockSparkline } from "@/components/StockSparkline";
 import { Store, LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +23,7 @@ function formatHTG(amount: number) {
 const Index = () => {
   const {
     products, productStats, addProduct, updateProduct, deleteProduct,
-    capitalInvesti, valeurStock, beneficeEstime, plusRentable, aSurveiller, critiques,
+    capitalInvesti, valeurStock, beneficeEstime, plusRentable, aSurveiller, critiques, stockHistory,
   } = useProducts();
 
   const { sales, addSale, gainsDuJour, clientsDuJour } = useSales();
@@ -82,7 +83,19 @@ const Index = () => {
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FinanceCard icon={DollarSign} label={t("capital_invested")} value={capitalInvesti} toUSD={toUSD} />
-                <FinanceCard icon={Package} label={t("stock_value")} value={valeurStock} toUSD={toUSD} />
+                <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
+                  <div className="rounded-lg bg-secondary p-2.5">
+                    <Package className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground">{t("stock_value")}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-bold">{formatHTG(valeurStock)}</p>
+                      <StockSparkline data={stockHistory} t={t} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">~${toUSD(valeurStock).toFixed(2)}</p>
+                  </div>
+                </div>
               </div>
               <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
                 <div className={`rounded-lg p-2.5 ${beneficeEstime >= 0 ? "bg-success/10" : "bg-destructive/10"}`}>
