@@ -74,8 +74,20 @@ const Index = () => {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-5 space-y-5">
+        {/* ── ONBOARDING (new user, no products) ── */}
+        {products.length === 0 && activeTab === "dashboard" && (
+          <div className="space-y-5">
+            <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 text-center space-y-3">
+              <img src={logoBiznisPam} alt="Biznis Pam" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
+              <h2 className="text-lg font-bold">{t("welcome") ?? "Byenveni!"}</h2>
+              <p className="text-sm text-muted-foreground">{t("add_first_product") ?? "Kòmanse ajoute premye pwodui ou a pou jere stòk ou."}</p>
+            </div>
+            <AddProductForm onAdd={addProduct} t={t} />
+          </div>
+        )}
+
         {/* ── DASHBOARD TAB ── */}
-        {activeTab === "dashboard" && (
+        {activeTab === "dashboard" && products.length > 0 && (
           <>
             {/* 1. ALERTES — Above the fold */}
             <CriticalProducts products={critiques} t={t} onRestock={handleRestock} />
