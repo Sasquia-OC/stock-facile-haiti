@@ -3,9 +3,10 @@ import { AlertTriangle } from "lucide-react";
 
 interface CriticalProductsProps {
   products: Product[];
+  t: (key: string) => string;
 }
 
-export function CriticalProducts({ products }: CriticalProductsProps) {
+export function CriticalProducts({ products, t }: CriticalProductsProps) {
   if (products.length === 0) return null;
 
   return (
@@ -13,7 +14,7 @@ export function CriticalProducts({ products }: CriticalProductsProps) {
       <div className="flex items-center gap-2 mb-3">
         <AlertTriangle className="h-4 w-4 text-destructive" />
         <h2 className="text-sm font-bold text-destructive">
-          Produits critiques ({products.length})
+          {t("critical_products")} ({products.length})
         </h2>
       </div>
       <div className="space-y-2">
@@ -30,7 +31,7 @@ export function CriticalProducts({ products }: CriticalProductsProps) {
                   : "bg-warning text-warning-foreground"
               }`}
             >
-              {p.quantite === 0 ? "Rupture" : `${p.quantite} restant${p.quantite > 1 ? "s" : ""}`}
+              {p.quantite === 0 ? t("stockout") : `${p.quantite} ${t("remaining")}`}
             </span>
           </div>
         ))}

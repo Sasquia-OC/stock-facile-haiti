@@ -1,0 +1,16 @@
+{
+  "name": "Biznis Pam",
+  "short_name": "Biznis Pam",
+  "description": "Gestion intelligente pour commerçants haïtiens",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#003893",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
