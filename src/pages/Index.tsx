@@ -13,7 +13,8 @@ import { AiAssistant } from "@/components/AiAssistant";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
-import { Store, LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import { LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 import { Button } from "@/components/ui/button";
 
 function formatHTG(amount: number) {
