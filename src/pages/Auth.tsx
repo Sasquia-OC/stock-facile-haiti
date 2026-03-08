@@ -69,7 +69,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-start pt-16 px-4 relative overflow-hidden">
       {/* Animated background shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-primary/5 blur-3xl animate-[pulse_6s_ease-in-out_infinite]" />
