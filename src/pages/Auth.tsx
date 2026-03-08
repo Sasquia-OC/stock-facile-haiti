@@ -50,9 +50,9 @@ export default function Auth() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center space-y-3">
           <div className="mx-auto w-fit rounded-2xl bg-white dark:bg-white/95 p-3 shadow-sm">
-            <img src={logoBiznisPam} alt="Biznis Pam" className="h-14 w-14 object-contain" />
+            <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-14 w-14 object-contain" />
           </div>
-          <CardTitle className="text-xl">Biznis Pam</CardTitle>
+          <CardTitle className="text-xl">Ayiti Biznis</CardTitle>
           <CardDescription>
             {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </CardDescription>

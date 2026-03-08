@@ -51,8 +51,8 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: "Biznis Pam",
-        short_name: "Biznis Pam",
+        name: "Ayiti Biznis",
+        short_name: "Ayiti Biznis",
         description: "Gestion intelligente pour commerçants haïtiens",
         start_url: "/",
         display: "standalone",

@@ -52,9 +52,9 @@ const Index = () => {
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="rounded-lg bg-white dark:bg-white/95 p-1">
-              <img src={logoBiznisPam} alt="Biznis Pam" className="h-7 w-7 object-contain" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-7 w-7 object-contain" />
             </div>
-            <h1 className="text-base font-bold leading-tight">Biznis Pam</h1>
+            <h1 className="text-base font-bold leading-tight">Ayiti Biznis</h1>
           </div>
           <div className="flex items-center gap-1">
             <SettingsPanel
@@ -78,7 +78,7 @@ const Index = () => {
         {products.length === 0 && activeTab === "dashboard" && (
           <div className="space-y-5">
             <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 text-center space-y-3">
-              <img src={logoBiznisPam} alt="Biznis Pam" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
               <h2 className="text-lg font-bold">{t("welcome") ?? "Byenveni!"}</h2>
               <p className="text-sm text-muted-foreground">{t("add_first_product") ?? "Kòmanse ajoute premye pwodui ou a pou jere stòk ou."}</p>
             </div>
