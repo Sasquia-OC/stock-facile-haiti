@@ -1,9 +1,15 @@
 import { Product } from "@/types/product";
-import { AlertTriangle, Trash2, Minus, Plus } from "lucide-react";
+import { AlertTriangle, Trash2, Minus, Plus, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface ProductWithStats extends Product {
+  margeBrute: number;
+  margePourcent: number;
+  beneficePotentiel: number;
+}
+
 interface ProductListProps {
-  products: Product[];
+  products: ProductWithStats[];
   onUpdate: (id: string, updates: Partial<Product>) => void;
   onDelete: (id: string) => void;
 }
@@ -22,9 +28,8 @@ export function ProductList({ products, onUpdate, onDelete }: ProductListProps) 
   if (products.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        <Package className="mx-auto h-12 w-12 mb-3 opacity-40" />
-        <p className="text-sm">Aucun produit dans le stock</p>
-        <p className="text-xs mt-1">Ajoutez votre premier produit ci-dessus</p>
+        <PackageIcon className="mx-auto h-12 w-12 mb-3 opacity-40" />
+        <p className="text-sm">Aucun produit trouvé</p>
       </div>
     );
   }
@@ -47,6 +52,16 @@ export function ProductList({ products, onUpdate, onDelete }: ProductListProps) 
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
+                  {/* Color dot indicator */}
+                  <span
+                    className={`shrink-0 h-2.5 w-2.5 rounded-full ${
+                      status === "rupture"
+                        ? "bg-destructive"
+                        : status === "alerte"
+                        ? "bg-warning"
+                        : "bg-success"
+                    }`}
+                  />
                   <h3 className="font-semibold text-sm truncate">{product.nom}</h3>
                   {status === "rupture" && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">
@@ -63,20 +78,25 @@ export function ProductList({ products, onUpdate, onDelete }: ProductListProps) 
                   <span>Achat: {formatHTG(product.prixAchat)}</span>
                   <span>Vente: {formatHTG(product.prixVente)}</span>
                   <span className="text-success font-medium">
-                    Marge: {formatHTG(product.prixVente - product.prixAchat)}
+                    Marge: {formatHTG(product.margeBrute)} ({product.margePourcent.toFixed(0)}%)
                   </span>
                 </div>
+                {product.beneficePotentiel > 0 && (
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Bénéfice potentiel: <span className="font-semibold text-success">{formatHTG(product.beneficePotentiel)}</span>
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-10 w-10"
                   onClick={() =>
                     onUpdate(product.id, { quantite: Math.max(0, product.quantite - 1) })
                   }
                 >
-                  <Minus className="h-3.5 w-3.5" />
+                  <Minus className="h-4 w-4" />
                 </Button>
                 <span className="w-10 text-center font-bold text-sm tabular-nums">
                   {product.quantite}
@@ -84,20 +104,20 @@ export function ProductList({ products, onUpdate, onDelete }: ProductListProps) 
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-10 w-10"
                   onClick={() =>
                     onUpdate(product.id, { quantite: product.quantite + 1 })
                   }
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  className="h-10 w-10 text-muted-foreground hover:text-destructive"
                   onClick={() => onDelete(product.id)}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -108,7 +128,7 @@ export function ProductList({ products, onUpdate, onDelete }: ProductListProps) 
   );
 }
 
-function Package(props: React.SVGProps<SVGSVGElement>) {
+function PackageIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
       <path d="M16.5 9.4 7.55 4.24"/>

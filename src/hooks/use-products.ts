@@ -1,12 +1,64 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Product } from "@/types/product";
 
 const STORAGE_KEY = "stock-haiti-products";
 
+const MOCK_PRODUCTS: Product[] = [
+  {
+    id: "mock-1",
+    nom: "Riz 25kg",
+    quantite: 45,
+    prixAchat: 1200,
+    prixVente: 1600,
+    seuilAlerte: 10,
+    dateAjout: new Date().toISOString(),
+  },
+  {
+    id: "mock-2",
+    nom: "Huile 1L",
+    quantite: 3,
+    prixAchat: 250,
+    prixVente: 350,
+    seuilAlerte: 5,
+    dateAjout: new Date().toISOString(),
+  },
+  {
+    id: "mock-3",
+    nom: "Sucre 2kg",
+    quantite: 0,
+    prixAchat: 150,
+    prixVente: 220,
+    seuilAlerte: 5,
+    dateAjout: new Date().toISOString(),
+  },
+  {
+    id: "mock-4",
+    nom: "Savon (paquet de 12)",
+    quantite: 28,
+    prixAchat: 300,
+    prixVente: 500,
+    seuilAlerte: 5,
+    dateAjout: new Date().toISOString(),
+  },
+  {
+    id: "mock-5",
+    nom: "Spaghetti 500g",
+    quantite: 60,
+    prixAchat: 75,
+    prixVente: 125,
+    seuilAlerte: 15,
+    dateAjout: new Date().toISOString(),
+  },
+];
+
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed.length > 0 ? parsed : MOCK_PRODUCTS;
+    }
+    return MOCK_PRODUCTS;
   });
 
   useEffect(() => {
@@ -42,13 +94,51 @@ export function useProducts() {
   );
   const beneficeEstime = valeurStock - capitalInvesti;
 
+  // Smart indicators
+  const productStats = useMemo(() => {
+    return products.map((p) => ({
+      ...p,
+      margeBrute: p.prixVente - p.prixAchat,
+      margePourcent: p.prixAchat > 0 ? ((p.prixVente - p.prixAchat) / p.prixAchat) * 100 : 0,
+      beneficePotentiel: (p.prixVente - p.prixAchat) * p.quantite,
+    }));
+  }, [products]);
+
+  const plusRentable = useMemo(() => {
+    if (products.length === 0) return null;
+    return productStats.reduce((best, p) =>
+      p.beneficePotentiel > best.beneficePotentiel ? p : best
+    , productStats[0]);
+  }, [productStats]);
+
+  const critiques = useMemo(() => {
+    return products.filter((p) => p.quantite === 0 || p.quantite <= p.seuilAlerte);
+  }, [products]);
+
+  const aSurveiller = useMemo(() => {
+    if (critiques.length === 0) return null;
+    // Product to watch = critical product with highest potential profit
+    const critiqueStats = critiques.map((p) => ({
+      ...p,
+      beneficePotentiel: (p.prixVente - p.prixAchat) * p.quantite,
+      margePourcent: p.prixAchat > 0 ? ((p.prixVente - p.prixAchat) / p.prixAchat) * 100 : 0,
+    }));
+    return critiqueStats.reduce((worst, p) =>
+      p.margePourcent > worst.margePourcent ? p : worst
+    , critiqueStats[0]);
+  }, [critiques]);
+
   return {
     products,
+    productStats,
     addProduct,
     updateProduct,
     deleteProduct,
     capitalInvesti,
     valeurStock,
     beneficeEstime,
+    plusRentable,
+    aSurveiller,
+    critiques,
   };
 }
