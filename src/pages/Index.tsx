@@ -10,6 +10,7 @@ import { CriticalProducts } from "@/components/CriticalProducts";
 import { SearchBar } from "@/components/SearchBar";
 import { SalesModule } from "@/components/SalesModule";
 import { AiAssistant } from "@/components/AiAssistant";
+import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
