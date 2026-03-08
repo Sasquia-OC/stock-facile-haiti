@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Product } from "@/types/product";
 
 const STORAGE_KEY = "stock-haiti-products";
+const HISTORY_KEY = "stock-haiti-value-history";
 
 const MOCK_PRODUCTS: Product[] = [
   {
