@@ -49,8 +49,8 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center space-y-3">
-          <div className="mx-auto w-fit">
-            <img src={logoBiznisPam} alt="Biznis Pam" className="h-16 w-16 object-contain" />
+          <div className="mx-auto w-fit rounded-2xl bg-white dark:bg-white/95 p-3 shadow-sm">
+            <img src={logoBiznisPam} alt="Biznis Pam" className="h-14 w-14 object-contain" />
           </div>
           <CardTitle className="text-xl">Biznis Pam</CardTitle>
           <CardDescription>
