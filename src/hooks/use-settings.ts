@@ -69,7 +69,6 @@ const translations: Record<string, Record<Language, string>> = {
   "restock": { fr: "Réapprovisionner", ht: "Re-achte" },
   "details": { fr: "Détails", ht: "Detay" },
   "delete": { fr: "Supprimer", ht: "Efase" },
-  "dashboard": { fr: "Tableau de bord", ht: "Tablo" },
 };
 
 export function useSettings() {
