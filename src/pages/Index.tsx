@@ -52,9 +52,9 @@ const Index = () => {
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="rounded-lg bg-white dark:bg-white/95 p-1">
-              <img src={logoBiznisPam} alt="Biznis Pam" className="h-7 w-7 object-contain" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-7 w-7 object-contain" />
             </div>
-            <h1 className="text-base font-bold leading-tight">Biznis Pam</h1>
+            <h1 className="text-base font-bold leading-tight">Ayiti Biznis</h1>
           </div>
           <div className="flex items-center gap-1">
             <SettingsPanel
