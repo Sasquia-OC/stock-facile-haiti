@@ -10,6 +10,7 @@ import { CriticalProducts } from "@/components/CriticalProducts";
 import { SearchBar } from "@/components/SearchBar";
 import { SalesModule } from "@/components/SalesModule";
 import { AiAssistant } from "@/components/AiAssistant";
+import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
@@ -164,6 +165,9 @@ const Index = () => {
 
             {/* 4. ANALYSE — IA + Smart Indicators */}
             <AiAssistant products={products} sales={sales} language={settings.language} t={t} />
+
+            {/* 5. FEEDBACK */}
+            <FeedbackSection t={t} />
 
             {(plusRentable || aSurveiller) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
