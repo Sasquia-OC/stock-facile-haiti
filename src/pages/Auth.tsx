@@ -101,10 +101,10 @@ export default function Auth() {
           />
           <div className="relative z-10 space-y-3">
             <div
-              className="mx-auto w-fit rounded-2xl bg-white/95 p-3 shadow-lg animate-scale-in"
+              className="mx-auto w-fit rounded-2xl bg-white/95 p-4 shadow-lg animate-scale-in"
               style={{ animationDelay: "0.2s", animationFillMode: "both" }}
             >
-              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-14 w-14 object-contain" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-20 w-20 object-contain" />
             </div>
             <h2
               className="text-2xl font-bold text-white tracking-tight animate-fade-in"
