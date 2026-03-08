@@ -248,6 +248,16 @@ const Index = () => {
 
       {/* Bottom Navigation */}
       <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} />
+
+      {/* Reports overlay */}
+      {showReports && (
+        <ReportSection
+          sales={sales}
+          t={t}
+          toUSD={toUSD}
+          onClose={() => setShowReports(false)}
+        />
+      )}
     </div>
   );
 };
