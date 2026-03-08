@@ -70,9 +70,11 @@ const Index = () => {
               onTauxChange={setTauxDollar}
               t={t}
             />
-            <Button variant="ghost" size="icon" onClick={signOut} title={t("close")}>
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <HeaderMenu
+              t={t}
+              onSignOut={signOut}
+              onOpenReports={() => setShowReports(true)}
+            />
           </div>
         </div>
       </header>
