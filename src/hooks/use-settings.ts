@@ -93,6 +93,18 @@ const translations: Record<string, Record<Language, string>> = {
   "feedback_send": { fr: "Envoyer", ht: "Voye" },
   "feedback_thanks": { fr: "Merci pour votre avis !", ht: "Mèsi pou opinyon ou !" },
   "feedback_sent": { fr: "Feedback envoyé", ht: "Feedback voye" },
+  "logout": { fr: "Déconnexion", ht: "Dekonekte" },
+  "reports": { fr: "Rapports", ht: "Rapò" },
+  "report_daily": { fr: "Aujourd'hui", ht: "Jodi a" },
+  "report_weekly": { fr: "Cette semaine", ht: "Semèn sa a" },
+  "report_monthly": { fr: "Ce mois", ht: "Mwa sa a" },
+  "report_yearly": { fr: "Cette année", ht: "Ane sa a" },
+  "report_revenue": { fr: "Chiffre d'affaires", ht: "Lajan antre" },
+  "report_transactions": { fr: "Transactions", ht: "Tranzaksyon" },
+  "report_items_sold": { fr: "Articles vendus", ht: "Atik vann" },
+  "report_avg_sale": { fr: "Vente moyenne", ht: "Vant mwayèn" },
+  "report_top_product": { fr: "Produit star", ht: "Pwodwi vedèt" },
+  "report_no_sales": { fr: "Aucune vente sur cette période", ht: "Pa gen vant nan peryòd sa a" },
 };
 
 export function useSettings() {

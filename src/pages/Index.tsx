@@ -12,9 +12,11 @@ import { SalesModule } from "@/components/SalesModule";
 import { AiAssistant } from "@/components/AiAssistant";
 import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
+import { HeaderMenu } from "@/components/HeaderMenu";
+import { ReportSection } from "@/components/ReportSection";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
-import { LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 import { Button } from "@/components/ui/button";
 
@@ -35,6 +37,7 @@ const Index = () => {
 
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+  const [showReports, setShowReports] = useState(false);
 
   const filteredStats = useMemo(() => {
     if (!search.trim()) return productStats;
@@ -67,9 +70,11 @@ const Index = () => {
               onTauxChange={setTauxDollar}
               t={t}
             />
-            <Button variant="ghost" size="icon" onClick={signOut} title={t("close")}>
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <HeaderMenu
+              t={t}
+              onSignOut={signOut}
+              onOpenReports={() => setShowReports(true)}
+            />
           </div>
         </div>
       </header>
@@ -243,6 +248,16 @@ const Index = () => {
 
       {/* Bottom Navigation */}
       <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} />
+
+      {/* Reports overlay */}
+      {showReports && (
+        <ReportSection
+          sales={sales}
+          t={t}
+          toUSD={toUSD}
+          onClose={() => setShowReports(false)}
+        />
+      )}
     </div>
   );
 };
