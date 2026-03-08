@@ -78,7 +78,7 @@ const Index = () => {
         {products.length === 0 && activeTab === "dashboard" && (
           <div className="space-y-5">
             <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 text-center space-y-3">
-              <img src={logoBiznisPam} alt="Biznis Pam" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
               <h2 className="text-lg font-bold">{t("welcome") ?? "Byenveni!"}</h2>
               <p className="text-sm text-muted-foreground">{t("add_first_product") ?? "Kòmanse ajoute premye pwodui ou a pou jere stòk ou."}</p>
             </div>
