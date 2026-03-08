@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/hooks/use-settings";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 
 export default function Auth() {
@@ -13,6 +14,9 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t, settings, setLanguage } = useSettings();
+
+  const toggleLang = () => setLanguage(settings.language === "fr" ? "ht" : "fr");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,13 +34,13 @@ export default function Auth() {
         });
         if (error) throw error;
         toast({
-          title: "Inscription réussie !",
-          description: "Vérifiez votre email pour confirmer votre compte.",
+          title: t("auth_signup_success"),
+          description: t("auth_signup_check_email"),
         });
       }
     } catch (error: any) {
       toast({
-        title: "Erreur",
+        title: t("auth_error"),
         description: error.message,
         variant: "destructive",
       });
@@ -46,7 +50,17 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative">
+      {/* Sélecteur de langue */}
+      <button
+        onClick={toggleLang}
+        className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm hover:bg-accent transition-colors"
+        type="button"
+      >
+        <Globe className="h-3.5 w-3.5" />
+        {settings.language === "fr" ? "Kreyòl" : "Français"}
+      </button>
+
       {/* Bannière de bienvenue */}
       <div className="w-full max-w-sm mb-6 rounded-2xl overflow-hidden shadow-lg">
         <div className="relative bg-gradient-to-r from-[hsl(216,100%,29%)] via-[hsl(216,100%,22%)] to-[hsl(352,80%,45%)] p-6 text-center">
@@ -56,10 +70,10 @@ export default function Auth() {
               <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-12 w-12 object-contain" />
             </div>
             <h2 className="text-xl font-bold text-white tracking-tight">
-              Byenveni sou Ayiti Biznis!
+              {t("auth_welcome_title")}
             </h2>
             <p className="text-sm text-white/80">
-              Jere biznis ou pi byen — stòk, vant ak benefis.
+              {t("auth_welcome_desc")}
             </p>
           </div>
         </div>
@@ -68,24 +82,24 @@ export default function Auth() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center space-y-1 pt-5 pb-3">
           <CardTitle className="text-lg">
-            {isLogin ? "Konekte ou" : "Kreye kont ou"}
+            {isLogin ? t("auth_login_title") : t("auth_signup_title")}
           </CardTitle>
           <CardDescription>
-            {isLogin ? "Antre email ak modpas ou" : "Enskri gratis pou kòmanse"}
+            {isLogin ? t("auth_login_desc") : t("auth_signup_desc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               type="email"
-              placeholder="Email"
+              placeholder={t("auth_email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <Input
               type="password"
-              placeholder="Mot de passe"
+              placeholder={t("auth_password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -93,7 +107,7 @@ export default function Auth() {
             />
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isLogin ? "Se connecter" : "S'inscrire"}
+              {isLogin ? t("auth_login_btn") : t("auth_signup_btn")}
             </Button>
           </form>
           <div className="mt-4 text-center">
@@ -102,9 +116,7 @@ export default function Auth() {
               onClick={() => setIsLogin(!isLogin)}
               className="text-sm text-primary hover:underline"
             >
-              {isLogin
-                ? "Pas encore de compte ? S'inscrire"
-                : "Déjà un compte ? Se connecter"}
+              {isLogin ? t("auth_no_account") : t("auth_has_account")}
             </button>
           </div>
         </CardContent>

@@ -71,6 +71,22 @@ const translations: Record<string, Record<Language, string>> = {
   "restock": { fr: "Réapprovisionner", ht: "Re-achte" },
   "details": { fr: "Détails", ht: "Detay" },
   "delete": { fr: "Supprimer", ht: "Efase" },
+  // Auth page
+  "auth_welcome_title": { fr: "Bienvenue sur Ayiti Biznis !", ht: "Byenveni sou Ayiti Biznis !" },
+  "auth_welcome_desc": { fr: "Gérez votre commerce — stock, ventes et bénéfices.", ht: "Jere biznis ou pi byen — stòk, vant ak benefis." },
+  "auth_login_title": { fr: "Connexion", ht: "Konekte ou" },
+  "auth_signup_title": { fr: "Créer un compte", ht: "Kreye kont ou" },
+  "auth_login_desc": { fr: "Entrez votre email et mot de passe", ht: "Antre email ak modpas ou" },
+  "auth_signup_desc": { fr: "Inscrivez-vous gratuitement", ht: "Enskri gratis pou kòmanse" },
+  "auth_email": { fr: "Email", ht: "Imèl" },
+  "auth_password": { fr: "Mot de passe", ht: "Modpas" },
+  "auth_login_btn": { fr: "Se connecter", ht: "Konekte" },
+  "auth_signup_btn": { fr: "S'inscrire", ht: "Enskri" },
+  "auth_no_account": { fr: "Pas encore de compte ? S'inscrire", ht: "Ou poko gen kont ? Enskri" },
+  "auth_has_account": { fr: "Déjà un compte ? Se connecter", ht: "Ou gen kont deja ? Konekte" },
+  "auth_signup_success": { fr: "Inscription réussie !", ht: "Enskripsyon reyisi !" },
+  "auth_signup_check_email": { fr: "Vérifiez votre email pour confirmer votre compte.", ht: "Tcheke imèl ou pou konfime kont ou." },
+  "auth_error": { fr: "Erreur", ht: "Erè" },
 };
 
 export function useSettings() {
