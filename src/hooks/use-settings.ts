@@ -62,6 +62,14 @@ const translations: Record<string, Record<Language, string>> = {
   "select_product": { fr: "Sélectionner un produit", ht: "Chwazi yon pwodui" },
   "qty_to_sell": { fr: "Quantité à vendre", ht: "Kantite pou vann" },
   "added_to_stock": { fr: "ajouté au stock !", ht: "ajoute nan stòk !" },
+  "all_clear": { fr: "Tout est sous contrôle", ht: "Tout anba kontwòl" },
+  "all_clear_desc": { fr: "Aucun produit en rupture ou en stock bas", ht: "Pa gen pwodui ki fini oubyen ki ba" },
+  "stockout_alert": { fr: "Ruptures de stock", ht: "Pwodui ki fini" },
+  "low_stock_alert": { fr: "Stocks bas", ht: "Stòk ba" },
+  "restock": { fr: "Réapprovisionner", ht: "Re-achte" },
+  "details": { fr: "Détails", ht: "Detay" },
+  "delete": { fr: "Supprimer", ht: "Efase" },
+  "dashboard": { fr: "Tableau de bord", ht: "Tablo" },
 };
 
 export function useSettings() {
