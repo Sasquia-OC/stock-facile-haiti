@@ -13,7 +13,8 @@ import { AiAssistant } from "@/components/AiAssistant";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
-import { Store, LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import { LogOut, DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 import { Button } from "@/components/ui/button";
 
 function formatHTG(amount: number) {
@@ -50,9 +51,7 @@ const Index = () => {
       <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-md border-b px-4 py-3">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="rounded-lg bg-primary p-1.5">
-              <Store className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img src={logoBiznisPam} alt="Biznis Pam" className="h-8 w-8 object-contain" />
             <h1 className="text-base font-bold leading-tight">Biznis Pam</h1>
           </div>
           <div className="flex items-center gap-1">

@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Store, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -48,8 +49,8 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center space-y-3">
-          <div className="mx-auto rounded-xl bg-primary p-3 w-fit">
-            <Store className="h-7 w-7 text-primary-foreground" />
+          <div className="mx-auto w-fit">
+            <img src={logoBiznisPam} alt="Biznis Pam" className="h-16 w-16 object-contain" />
           </div>
           <CardTitle className="text-xl">Biznis Pam</CardTitle>
           <CardDescription>
