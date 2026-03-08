@@ -38,6 +38,80 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          created_at: string
+          id: string
+          nom: string
+          prix_achat: number
+          prix_vente: number
+          quantite: number
+          seuil_alerte: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nom: string
+          prix_achat?: number
+          prix_vente?: number
+          quantite?: number
+          seuil_alerte?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nom?: string
+          prix_achat?: number
+          prix_vente?: number
+          quantite?: number
+          seuil_alerte?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          created_at: string
+          id: string
+          prix_vente: number
+          product_id: string | null
+          product_name: string
+          quantite: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          prix_vente?: number
+          product_id?: string | null
+          product_name: string
+          quantite?: number
+          total?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          prix_vente?: number
+          product_id?: string | null
+          product_name?: string
+          quantite?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

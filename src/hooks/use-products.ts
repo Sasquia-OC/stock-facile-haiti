@@ -1,138 +1,82 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Product } from "@/types/product";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-
-const BASE_STORAGE_KEY = "stock-haiti-products";
-const BASE_HISTORY_KEY = "stock-haiti-value-history";
-
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: "mock-1",
-    nom: "Riz 25kg",
-    quantite: 45,
-    prixAchat: 1200,
-    prixVente: 1600,
-    seuilAlerte: 10,
-    dateAjout: new Date().toISOString(),
-  },
-  {
-    id: "mock-2",
-    nom: "Huile 1L",
-    quantite: 3,
-    prixAchat: 250,
-    prixVente: 350,
-    seuilAlerte: 5,
-    dateAjout: new Date().toISOString(),
-  },
-  {
-    id: "mock-3",
-    nom: "Sucre 2kg",
-    quantite: 0,
-    prixAchat: 150,
-    prixVente: 220,
-    seuilAlerte: 5,
-    dateAjout: new Date().toISOString(),
-  },
-  {
-    id: "mock-4",
-    nom: "Savon (paquet de 12)",
-    quantite: 28,
-    prixAchat: 300,
-    prixVente: 500,
-    seuilAlerte: 5,
-    dateAjout: new Date().toISOString(),
-  },
-  {
-    id: "mock-5",
-    nom: "Spaghetti 500g",
-    quantite: 60,
-    prixAchat: 75,
-    prixVente: 125,
-    seuilAlerte: 15,
-    dateAjout: new Date().toISOString(),
-  },
-];
 
 export function useProducts() {
   const { user } = useAuth();
-  const userId = user?.id;
-  const STORAGE_KEY = userId ? `${BASE_STORAGE_KEY}-${userId}` : BASE_STORAGE_KEY;
-  const HISTORY_KEY = userId ? `${BASE_HISTORY_KEY}-${userId}` : BASE_HISTORY_KEY;
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [products, setProducts] = useState<Product[]>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      return parsed.length > 0 ? parsed : MOCK_PRODUCTS;
+  const fetchProducts = useCallback(async () => {
+    if (!user) { setProducts([]); setLoading(false); return; }
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error && data) {
+      setProducts(data.map((p) => ({
+        id: p.id,
+        nom: p.nom,
+        quantite: p.quantite,
+        prixAchat: Number(p.prix_achat),
+        prixVente: Number(p.prix_vente),
+        seuilAlerte: p.seuil_alerte,
+        dateAjout: p.created_at,
+      })));
     }
-    return MOCK_PRODUCTS;
-  });
+    setLoading(false);
+  }, [user]);
 
-  // Re-load when user changes
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setProducts(parsed.length > 0 ? parsed : MOCK_PRODUCTS);
-    } else {
-      setProducts(MOCK_PRODUCTS);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+
+  const addProduct = async (product: Omit<Product, "id" | "dateAjout">) => {
+    if (!user) return;
+    const { data, error } = await supabase.from("products").insert({
+      user_id: user.id,
+      nom: product.nom,
+      quantite: product.quantite,
+      prix_achat: product.prixAchat,
+      prix_vente: product.prixVente,
+      seuil_alerte: product.seuilAlerte,
+    }).select().single();
+    if (!error && data) {
+      setProducts((prev) => [{
+        id: data.id,
+        nom: data.nom,
+        quantite: data.quantite,
+        prixAchat: Number(data.prix_achat),
+        prixVente: Number(data.prix_vente),
+        seuilAlerte: data.seuil_alerte,
+        dateAjout: data.created_at,
+      }, ...prev]);
     }
-  }, [STORAGE_KEY]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-  }, [products, STORAGE_KEY]);
-
-  // Track daily stock value history (last 7 days)
-  const valeurStockCurrent = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
-
-  const [stockHistory, setStockHistory] = useState<{ date: string; value: number }[]>(() => {
-    const stored = localStorage.getItem(HISTORY_KEY);
-    return stored ? JSON.parse(stored) : [];
-  });
-
-  useEffect(() => {
-    const stored = localStorage.getItem(HISTORY_KEY);
-    setStockHistory(stored ? JSON.parse(stored) : []);
-  }, [HISTORY_KEY]);
-
-  useEffect(() => {
-    const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
-    setStockHistory((prev) => {
-      const filtered = prev.filter((e) => e.date !== today);
-      const updated = [...filtered, { date: today, value: valeurStockCurrent }].slice(-7);
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  }, [valeurStockCurrent, HISTORY_KEY]);
-
-  const addProduct = (product: Omit<Product, "id" | "dateAjout">) => {
-    const newProduct: Product = {
-      ...product,
-      id: crypto.randomUUID(),
-      dateAjout: new Date().toISOString(),
-    };
-    setProducts((prev) => [newProduct, ...prev]);
   };
 
-  const updateProduct = (id: string, updates: Partial<Product>) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...updates } : p))
-    );
+  const updateProduct = async (id: string, updates: Partial<Product>) => {
+    const dbUpdates: Record<string, any> = {};
+    if (updates.nom !== undefined) dbUpdates.nom = updates.nom;
+    if (updates.quantite !== undefined) dbUpdates.quantite = updates.quantite;
+    if (updates.prixAchat !== undefined) dbUpdates.prix_achat = updates.prixAchat;
+    if (updates.prixVente !== undefined) dbUpdates.prix_vente = updates.prixVente;
+    if (updates.seuilAlerte !== undefined) dbUpdates.seuil_alerte = updates.seuilAlerte;
+
+    const { error } = await supabase.from("products").update(dbUpdates).eq("id", id);
+    if (!error) {
+      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+    }
   };
 
-  const deleteProduct = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  const deleteProduct = async (id: string) => {
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (!error) {
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    }
   };
 
-  const capitalInvesti = products.reduce(
-    (sum, p) => sum + p.prixAchat * p.quantite,
-    0
-  );
-  const valeurStock = products.reduce(
-    (sum, p) => sum + p.prixVente * p.quantite,
-    0
-  );
+  const capitalInvesti = products.reduce((sum, p) => sum + p.prixAchat * p.quantite, 0);
+  const valeurStock = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
   const beneficeEstime = valeurStock - capitalInvesti;
 
   const productStats = useMemo(() => {
@@ -167,6 +111,12 @@ export function useProducts() {
     , critiqueStats[0]);
   }, [critiques]);
 
+  // Stock history from products (simplified - current snapshot)
+  const stockHistory = useMemo(() => {
+    const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+    return [{ date: today, value: valeurStock }];
+  }, [valeurStock]);
+
   return {
     products,
     productStats,
@@ -180,5 +130,6 @@ export function useProducts() {
     aSurveiller,
     critiques,
     stockHistory,
+    loading,
   };
 }
