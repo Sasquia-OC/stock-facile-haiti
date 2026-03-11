@@ -38,8 +38,10 @@ function getStockStatus(product: Product) {
   return "ok";
 }
 
-export function ProductList({ products, onUpdate, onDelete, t }: ProductListProps) {
+export function ProductList({ products, onUpdate, onDelete, onSale, t, isOwner = true }: ProductListProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Product>>({});
 
   if (products.length === 0) {
     return (
