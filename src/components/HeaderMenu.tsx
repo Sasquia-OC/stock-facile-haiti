@@ -24,14 +24,14 @@ export function HeaderMenu({ t, onSignOut, onOpenReports }: HeaderMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         {onOpenReports && (
-          <DropdownMenuItem onClick={onOpenReports} className="gap-2 cursor-pointer">
-            <FileText className="h-4 w-4" />
-            {t("reports")}
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem onClick={onOpenReports} className="gap-2 cursor-pointer">
+              <FileText className="h-4 w-4" />
+              {t("reports")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-        {onOpenReports && <DropdownMenuSeparator />}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onSignOut} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
           <LogOut className="h-4 w-4" />
           {t("logout")}
