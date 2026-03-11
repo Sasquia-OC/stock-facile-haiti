@@ -24,7 +24,8 @@ const employeeTabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string 
   { id: "history", icon: Clock, labelKey: "history" },
 ];
 
-export function BottomNav({ active, onChange, t, alertCount = 0 }: BottomNavProps) {
+export function BottomNav({ active, onChange, t, alertCount = 0, isOwner = true }: BottomNavProps) {
+  const tabs = isOwner ? ownerTabs : employeeTabs;
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t safe-area-bottom">
       <div className="max-w-lg mx-auto flex items-center justify-around h-14">
