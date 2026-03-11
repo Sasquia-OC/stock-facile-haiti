@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Product } from "@/types/product";
-import { AlertTriangle, Trash2, Minus, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { AlertTriangle, Trash2, Minus, Plus, ChevronDown, ChevronUp, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { QuickSellDialog } from "@/components/QuickSellDialog";
 
 interface ProductWithStats extends Product {
   margeBrute: number;
@@ -13,7 +15,17 @@ interface ProductListProps {
   products: ProductWithStats[];
   onUpdate: (id: string, updates: Partial<Product>) => void;
   onDelete: (id: string) => void;
+  onSale?: (sale: {
+    productId: string;
+    productName: string;
+    quantite: number;
+    prixVente: number;
+    total: number;
+    montantRecu: number;
+    monnaie: number;
+  }) => void;
   t: (key: string) => string;
+  isOwner?: boolean;
 }
 
 function formatHTG(amount: number) {
