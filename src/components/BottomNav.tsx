@@ -1,22 +1,31 @@
-import { LayoutDashboard, Package, ShoppingCart } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TabId = "dashboard" | "stock" | "sales";
+export type TabId = "dashboard" | "stock" | "sales" | "history";
 
 interface BottomNavProps {
   active: TabId;
   onChange: (tab: TabId) => void;
   t: (key: string) => string;
   alertCount?: number;
+  isOwner?: boolean;
 }
 
-const tabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
+const ownerTabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "dashboard" },
   { id: "stock", icon: Package, labelKey: "inventory" },
   { id: "sales", icon: ShoppingCart, labelKey: "pos" },
+  { id: "history", icon: Clock, labelKey: "history" },
 ];
 
-export function BottomNav({ active, onChange, t, alertCount = 0 }: BottomNavProps) {
+const employeeTabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
+  { id: "stock", icon: Package, labelKey: "inventory" },
+  { id: "sales", icon: ShoppingCart, labelKey: "pos" },
+  { id: "history", icon: Clock, labelKey: "history" },
+];
+
+export function BottomNav({ active, onChange, t, alertCount = 0, isOwner = true }: BottomNavProps) {
+  const tabs = isOwner ? ownerTabs : employeeTabs;
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t safe-area-bottom">
       <div className="max-w-lg mx-auto flex items-center justify-around h-14">

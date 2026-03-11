@@ -11,7 +11,7 @@ import {
 interface HeaderMenuProps {
   t: (key: string) => string;
   onSignOut: () => void;
-  onOpenReports: () => void;
+  onOpenReports?: () => void;
 }
 
 export function HeaderMenu({ t, onSignOut, onOpenReports }: HeaderMenuProps) {
@@ -23,11 +23,15 @@ export function HeaderMenu({ t, onSignOut, onOpenReports }: HeaderMenuProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem onClick={onOpenReports} className="gap-2 cursor-pointer">
-          <FileText className="h-4 w-4" />
-          {t("reports")}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {onOpenReports && (
+          <>
+            <DropdownMenuItem onClick={onOpenReports} className="gap-2 cursor-pointer">
+              <FileText className="h-4 w-4" />
+              {t("reports")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem onClick={onSignOut} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
           <LogOut className="h-4 w-4" />
           {t("logout")}

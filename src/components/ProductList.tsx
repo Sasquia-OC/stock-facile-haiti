@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Product } from "@/types/product";
-import { AlertTriangle, Trash2, Minus, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { AlertTriangle, Trash2, Minus, Plus, ChevronDown, ChevronUp, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { QuickSellDialog } from "@/components/QuickSellDialog";
 
 interface ProductWithStats extends Product {
   margeBrute: number;
@@ -13,7 +15,17 @@ interface ProductListProps {
   products: ProductWithStats[];
   onUpdate: (id: string, updates: Partial<Product>) => void;
   onDelete: (id: string) => void;
+  onSale?: (sale: {
+    productId: string;
+    productName: string;
+    quantite: number;
+    prixVente: number;
+    total: number;
+    montantRecu: number;
+    monnaie: number;
+  }) => void;
   t: (key: string) => string;
+  isOwner?: boolean;
 }
 
 function formatHTG(amount: number) {
@@ -26,8 +38,10 @@ function getStockStatus(product: Product) {
   return "ok";
 }
 
-export function ProductList({ products, onUpdate, onDelete, t }: ProductListProps) {
+export function ProductList({ products, onUpdate, onDelete, onSale, t, isOwner = true }: ProductListProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Product>>({});
 
   if (products.length === 0) {
     return (
@@ -103,41 +117,153 @@ export function ProductList({ products, onUpdate, onDelete, t }: ProductListProp
               </div>
             </div>
 
-            {/* Expand toggle for details (mobile-friendly) */}
-            <button
-              onClick={() => setExpanded(isExpanded ? null : product.id)}
-              className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1.5 hover:text-foreground transition-colors"
-            >
-              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-              {isExpanded ? t("close") : t("details")}
-            </button>
+            {/* Expand toggle + sell button */}
+            <div className="flex items-center gap-2 mt-1.5">
+              <button
+                onClick={() => setExpanded(isExpanded ? null : product.id)}
+                className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                {isExpanded ? t("close") : t("details")}
+              </button>
+              {onSale && product.quantite > 0 && (
+                <QuickSellDialog
+                  product={product}
+                  onSale={onSale}
+                  onUpdateStock={onUpdate}
+                  t={t}
+                />
+              )}
+            </div>
 
             {/* Expanded details */}
             {isExpanded && (
-              <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                  <span>{t("buy")}: {formatHTG(product.prixAchat)}</span>
-                  <span>{t("sell")}: {formatHTG(product.prixVente)}</span>
-                  <span className="text-success font-medium">
-                    {t("margin")}: {formatHTG(product.margeBrute)} ({product.margePourcent.toFixed(0)}%)
-                  </span>
-                </div>
-                {product.beneficePotentiel > 0 && (
-                  <p className="text-[11px] text-muted-foreground">
-                    {t("potential_profit")}: <span className="font-semibold text-success">{formatHTG(product.beneficePotentiel)}</span>
-                  </p>
+              <div className="mt-2 pt-2 border-t border-border/50 space-y-2">
+                {editing === product.id ? (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] text-muted-foreground">{t("product_name")}</label>
+                        <Input
+                          value={editForm.nom ?? product.nom}
+                          onChange={(e) => setEditForm((f) => ({ ...f, nom: e.target.value }))}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-muted-foreground">{t("quantity")}</label>
+                        <Input
+                          type="number"
+                          value={editForm.quantite ?? product.quantite}
+                          onChange={(e) => setEditForm((f) => ({ ...f, quantite: Number(e.target.value) }))}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      {isOwner && (
+                        <>
+                          <div>
+                            <label className="text-[10px] text-muted-foreground">{t("buy_price")}</label>
+                            <Input
+                              type="number"
+                              value={editForm.prixAchat ?? product.prixAchat}
+                              onChange={(e) => setEditForm((f) => ({ ...f, prixAchat: Number(e.target.value) }))}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-muted-foreground">{t("sell_price")}</label>
+                            <Input
+                              type="number"
+                              value={editForm.prixVente ?? product.prixVente}
+                              onChange={(e) => setEditForm((f) => ({ ...f, prixVente: Number(e.target.value) }))}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                        </>
+                      )}
+                      <div>
+                        <label className="text-[10px] text-muted-foreground">{t("alert_threshold")}</label>
+                        <Input
+                          type="number"
+                          value={editForm.seuilAlerte ?? product.seuilAlerte}
+                          onChange={(e) => setEditForm((f) => ({ ...f, seuilAlerte: Number(e.target.value) }))}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs gap-1"
+                        onClick={() => { setEditing(null); setEditForm({}); }}
+                      >
+                        <X className="h-3 w-3" /> {t("close")}
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-7 text-xs gap-1"
+                        onClick={() => {
+                          onUpdate(product.id, editForm);
+                          setEditing(null);
+                          setEditForm({});
+                        }}
+                      >
+                        <Check className="h-3 w-3" /> {t("save")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {isOwner && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span>{t("buy")}: {formatHTG(product.prixAchat)}</span>
+                        <span>{t("sell")}: {formatHTG(product.prixVente)}</span>
+                        <span className="text-success font-medium">
+                          {t("margin")}: {formatHTG(product.margeBrute)} ({product.margePourcent.toFixed(0)}%)
+                        </span>
+                      </div>
+                    )}
+                    {!isOwner && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span>{t("sell")}: {formatHTG(product.prixVente)}</span>
+                      </div>
+                    )}
+                    {isOwner && product.beneficePotentiel > 0 && (
+                      <p className="text-[11px] text-muted-foreground">
+                        {t("potential_profit")}: <span className="font-semibold text-success">{formatHTG(product.beneficePotentiel)}</span>
+                      </p>
+                    )}
+                    <p className="text-[11px] text-muted-foreground">
+                      {t("alert_threshold")}: {product.seuilAlerte}
+                    </p>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs gap-1"
+                        onClick={() => {
+                          setEditing(product.id);
+                          setEditForm({});
+                        }}
+                      >
+                        <Pencil className="h-3 w-3" />
+                        {t("edit")}
+                      </Button>
+                      {isOwner && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs text-muted-foreground hover:text-destructive gap-1"
+                          onClick={() => onDelete(product.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          {t("delete")}
+                        </Button>
+                      )}
+                    </div>
+                  </>
                 )}
-                <div className="flex justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 text-xs text-muted-foreground hover:text-destructive gap-1"
-                    onClick={() => onDelete(product.id)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    {t("delete")}
-                  </Button>
-                </div>
               </div>
             )}
           </div>

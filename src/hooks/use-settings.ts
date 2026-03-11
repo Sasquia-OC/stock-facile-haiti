@@ -104,6 +104,12 @@ const translations: Record<string, Record<Language, string>> = {
   "report_avg_sale": { fr: "Vente moyenne", ht: "Vant mwayèn" },
   "report_top_product": { fr: "Produit star", ht: "Pwodwi vedèt" },
   "report_no_sales": { fr: "Aucune vente sur cette période", ht: "Pa gen vant nan peryòd sa a" },
+  "history": { fr: "Historique", ht: "Istorik" },
+  "sales_history": { fr: "Historique des ventes", ht: "Istorik vant yo" },
+  "no_sales_yet": { fr: "Aucune vente enregistrée", ht: "Pa gen vant anrejistre" },
+  "edit": { fr: "Modifier", ht: "Modifye" },
+  "save": { fr: "Enregistrer", ht: "Anrejistre" },
+  "employee_view": { fr: "Vue employé", ht: "Vi anplwaye" },
 };
 
 export function useSettings() {
