@@ -4,11 +4,13 @@ import { useSales } from "@/hooks/use-sales";
 import { useSettings } from "@/hooks/use-settings";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
+import { useRole } from "@/hooks/use-role";
 import { ProductList } from "@/components/ProductList";
 import { AddProductForm } from "@/components/AddProductForm";
 import { CriticalProducts } from "@/components/CriticalProducts";
 import { SearchBar } from "@/components/SearchBar";
 import { SalesModule } from "@/components/SalesModule";
+import { SalesHistory } from "@/components/SalesHistory";
 import { AiAssistant } from "@/components/AiAssistant";
 import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
@@ -18,7 +20,6 @@ import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
 import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
-import { Button } from "@/components/ui/button";
 
 function formatHTG(amount: number) {
   return amount.toLocaleString("fr-HT", { minimumFractionDigits: 0 }) + " HTG";
@@ -34,9 +35,10 @@ const Index = () => {
   const { settings, t, setLanguage, setTauxDollar, toUSD } = useSettings();
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
+  const { isOwner } = useRole();
 
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<TabId>("dashboard");
+  const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
   const [showReports, setShowReports] = useState(false);
 
   const filteredStats = useMemo(() => {
@@ -73,15 +75,15 @@ const Index = () => {
             <HeaderMenu
               t={t}
               onSignOut={signOut}
-              onOpenReports={() => setShowReports(true)}
+              onOpenReports={isOwner ? () => setShowReports(true) : undefined}
             />
           </div>
         </div>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-5 space-y-5">
-        {/* Bannière de bienvenue dashboard */}
-        {activeTab === "dashboard" && (
+        {/* Welcome banner (dashboard only, owner only) */}
+        {activeTab === "dashboard" && isOwner && (
           <div className="rounded-2xl overflow-hidden shadow-md">
             <div className="relative bg-gradient-to-r from-[hsl(216,100%,29%)] via-[hsl(216,100%,22%)] to-[hsl(352,80%,45%)] px-5 py-4 flex items-center gap-4">
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_70%)]" />
@@ -95,25 +97,25 @@ const Index = () => {
             </div>
           </div>
         )}
-        {/* ── ONBOARDING (new user, no products) ── */}
-        {products.length === 0 && activeTab === "dashboard" && (
+
+        {/* Onboarding (no products) */}
+        {products.length === 0 && (activeTab === "dashboard" || activeTab === "stock") && (
           <div className="space-y-5">
             <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 text-center space-y-3">
               <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-16 w-16 mx-auto rounded-xl bg-white dark:bg-white/95 p-2" />
-              <h2 className="text-lg font-bold">{t("welcome") ?? "Byenveni!"}</h2>
-              <p className="text-sm text-muted-foreground">{t("add_first_product") ?? "Kòmanse ajoute premye pwodui ou a pou jere stòk ou."}</p>
+              <h2 className="text-lg font-bold">{t("welcome")}</h2>
+              <p className="text-sm text-muted-foreground">{t("add_first_product")}</p>
             </div>
-            <AddProductForm onAdd={addProduct} t={t} />
+            {isOwner && <AddProductForm onAdd={addProduct} t={t} />}
           </div>
         )}
 
-        {/* ── DASHBOARD TAB ── */}
-        {activeTab === "dashboard" && products.length > 0 && (
+        {/* ── DASHBOARD TAB (owner only) ── */}
+        {activeTab === "dashboard" && isOwner && products.length > 0 && (
           <>
-            {/* 1. ALERTES — Above the fold */}
             <CriticalProducts products={critiques} t={t} onRestock={handleRestock} />
 
-            {/* 2. FINANCES */}
+            {/* Finances */}
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FinanceCard icon={DollarSign} label={t("capital_invested")} value={capitalInvesti} toUSD={toUSD} />
@@ -145,7 +147,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* 3. PERFORMANCE */}
+            {/* Performance */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 flex items-center gap-3">
                 <div className="rounded-lg bg-primary p-2.5">
@@ -168,7 +170,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* 4. ANALYSE — IA + Smart Indicators */}
+            {/* AI + Indicators */}
             <AiAssistant products={products} sales={sales} language={settings.language} t={t} />
 
             {(plusRentable || aSurveiller) && (
@@ -196,7 +198,6 @@ const Index = () => {
               </div>
             )}
 
-            {/* 5. FEEDBACK — dernière section */}
             <FeedbackSection t={t} />
           </>
         )}
@@ -204,11 +205,18 @@ const Index = () => {
         {/* ── STOCK TAB ── */}
         {activeTab === "stock" && (
           <>
-            <CriticalProducts products={critiques} t={t} onRestock={handleRestock} />
-            <AddProductForm onAdd={addProduct} t={t} />
+            <CriticalProducts products={critiques} t={t} onRestock={isOwner ? handleRestock : undefined} />
+            {isOwner && <AddProductForm onAdd={addProduct} t={t} />}
             <div className="space-y-3">
               <SearchBar value={search} onChange={setSearch} placeholder={t("search")} />
-              <ProductList products={filteredStats} onUpdate={updateProduct} onDelete={deleteProduct} t={t} />
+              <ProductList
+                products={filteredStats}
+                onUpdate={updateProduct}
+                onDelete={deleteProduct}
+                onSale={addSale}
+                t={t}
+                isOwner={isOwner}
+              />
             </div>
           </>
         )}
@@ -239,6 +247,11 @@ const Index = () => {
             </div>
           </>
         )}
+
+        {/* ── HISTORY TAB ── */}
+        {activeTab === "history" && (
+          <SalesHistory sales={sales} t={t} />
+        )}
       </main>
 
       {/* Footer */}
@@ -246,17 +259,10 @@ const Index = () => {
         © {new Date().getFullYear()} Creovate. Tous droits réservés.
       </footer>
 
-      {/* Bottom Navigation */}
-      <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} />
+      <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} isOwner={isOwner} />
 
-      {/* Reports overlay */}
-      {showReports && (
-        <ReportSection
-          sales={sales}
-          t={t}
-          toUSD={toUSD}
-          onClose={() => setShowReports(false)}
-        />
+      {showReports && isOwner && (
+        <ReportSection sales={sales} t={t} toUSD={toUSD} onClose={() => setShowReports(false)} />
       )}
     </div>
   );
