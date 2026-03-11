@@ -1,19 +1,27 @@
-import { LayoutDashboard, Package, ShoppingCart } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TabId = "dashboard" | "stock" | "sales";
+export type TabId = "dashboard" | "stock" | "sales" | "history";
 
 interface BottomNavProps {
   active: TabId;
   onChange: (tab: TabId) => void;
   t: (key: string) => string;
   alertCount?: number;
+  isOwner?: boolean;
 }
 
-const tabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
+const ownerTabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "dashboard" },
   { id: "stock", icon: Package, labelKey: "inventory" },
   { id: "sales", icon: ShoppingCart, labelKey: "pos" },
+  { id: "history", icon: Clock, labelKey: "history" },
+];
+
+const employeeTabs: { id: TabId; icon: typeof LayoutDashboard; labelKey: string }[] = [
+  { id: "stock", icon: Package, labelKey: "inventory" },
+  { id: "sales", icon: ShoppingCart, labelKey: "pos" },
+  { id: "history", icon: Clock, labelKey: "history" },
 ];
 
 export function BottomNav({ active, onChange, t, alertCount = 0 }: BottomNavProps) {
