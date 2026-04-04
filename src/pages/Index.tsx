@@ -38,6 +38,7 @@ const Index = () => {
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
   const { isOwner } = useRole();
+  const trial = useTrial();
 
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");

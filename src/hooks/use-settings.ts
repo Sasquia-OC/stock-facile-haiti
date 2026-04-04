@@ -110,6 +110,13 @@ const translations: Record<string, Record<Language, string>> = {
   "edit": { fr: "Modifier", ht: "Modifye" },
   "save": { fr: "Enregistrer", ht: "Anrejistre" },
   "employee_view": { fr: "Vue employé", ht: "Vi anplwaye" },
+  "trial_badge": { fr: "Essai gratuit : {days} jours restants", ht: "Esè gratis : {days} jou ki rete" },
+  "trial_expired_title": { fr: "Votre essai est terminé", ht: "Esè ou a fini" },
+  "trial_expired_desc": { fr: "Pour continuer à gérer votre argent et votre stock, choisissez un plan.", ht: "Pou kontinye jere lajan ou ak stòk ou, chwazi yon plan." },
+  "trial_expired_cta": { fr: "Choisissez un plan pour continuer", ht: "Chwazi yon plan pou kontinye" },
+  "trial_expired_contact": { fr: "Contactez-nous pour activer votre compte.", ht: "Kontakte nou pou aktive kont ou." },
+  "trial_blocked_add": { fr: "Votre essai est terminé. Vous ne pouvez plus ajouter de produits.", ht: "Esè ou a fini. Ou pa ka ajoute pwodwi ankò." },
+  "trial_blocked_sell": { fr: "Votre essai est terminé. Vous ne pouvez plus enregistrer de ventes.", ht: "Esè ou a fini. Ou pa ka anrejistre vant ankò." },
 };
 
 export function useSettings() {
