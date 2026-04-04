@@ -31,13 +31,23 @@ export function useTrial(): TrialInfo {
     }
 
     const fetchProfile = async () => {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (error || !data) {
+      // Auto-create profile for existing users who don't have one
+      if (!data && !error) {
+        const { data: newProfile } = await supabase
+          .from("profiles")
+          .insert({ user_id: user.id })
+          .select()
+          .single();
+        data = newProfile;
+      }
+
+      if (!data) {
         setTrial((t) => ({ ...t, loading: false }));
         return;
       }
