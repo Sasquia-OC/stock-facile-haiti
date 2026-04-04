@@ -5,6 +5,8 @@ import { useSettings } from "@/hooks/use-settings";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useRole } from "@/hooks/use-role";
+import { useTrial } from "@/hooks/use-trial";
+import { TrialBadge } from "@/components/TrialBadge";
 import { ProductList } from "@/components/ProductList";
 import { AddProductForm } from "@/components/AddProductForm";
 import { CriticalProducts } from "@/components/CriticalProducts";
@@ -36,6 +38,7 @@ const Index = () => {
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
   const { isOwner } = useRole();
+  const trial = useTrial();
 
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
@@ -80,6 +83,8 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      <TrialBadge trial={trial} t={t} />
 
       <main className="max-w-lg mx-auto px-4 py-5 space-y-5">
         {/* Welcome banner (dashboard only, owner only) */}
