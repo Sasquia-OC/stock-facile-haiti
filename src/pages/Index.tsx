@@ -84,6 +84,8 @@ const Index = () => {
         </div>
       </header>
 
+      <TrialBadge trial={trial} t={t} />
+
       <main className="max-w-lg mx-auto px-4 py-5 space-y-5">
         {/* Welcome banner (dashboard only, owner only) */}
         {activeTab === "dashboard" && isOwner && (
