@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Product } from "@/types/product";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { offlineAwareOperation } from "@/hooks/use-offline-sync";
 
 export function useProducts() {
   const { user } = useAuth();
