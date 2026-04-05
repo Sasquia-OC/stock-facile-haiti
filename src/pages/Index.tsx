@@ -44,6 +44,7 @@ const Index = () => {
   const { isOwner } = useRole();
   const trial = useTrial();
   const { notifyLowStock, notifyStockout, notifyTrial } = useNotifications();
+  useOfflineSync(() => { /* Will auto-refresh via Supabase subscriptions */ });
 
   const [search, setSearch] = useState("");
   const prevCritiquesRef = useRef<Set<string>>(new Set());
