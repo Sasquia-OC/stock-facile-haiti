@@ -59,10 +59,10 @@ const Index = () => {
 
   // Notify on trial expiration warning
   useEffect(() => {
-    if (trial.daysLeft !== null && (trial.daysLeft === 15 || trial.daysLeft === 3 || trial.daysLeft === 1)) {
-      notifyTrial(trial.daysLeft);
+    if (trial.daysRemaining !== null && (trial.daysRemaining === 15 || trial.daysRemaining === 3 || trial.daysRemaining === 1)) {
+      notifyTrial(trial.daysRemaining);
     }
-  }, [trial.daysLeft, notifyTrial]);
+  }, [trial.daysRemaining, notifyTrial]);
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
   const [showReports, setShowReports] = useState(false);
 
