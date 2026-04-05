@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShoppingCart, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useNotifications } from "@/hooks/use-notifications";
 
 interface QuickSellDialogProps {
   product: Product;
