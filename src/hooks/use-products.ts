@@ -80,9 +80,16 @@ export function useProducts() {
     if (updates.prixVente !== undefined) dbUpdates.prix_vente = updates.prixVente;
     if (updates.seuilAlerte !== undefined) dbUpdates.seuil_alerte = updates.seuilAlerte;
 
+    // Optimistic update
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+
+    const handled = await offlineAwareOperation("products", "update", { id, ...dbUpdates });
+    if (handled) return;
+
     const { error } = await supabase.from("products").update(dbUpdates).eq("id", id);
-    if (!error) {
-      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+    if (error) {
+      // Revert on error - refetch
+      fetchProducts();
     }
   };
 
