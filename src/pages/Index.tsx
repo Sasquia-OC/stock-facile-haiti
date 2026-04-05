@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useProducts } from "@/hooks/use-products";
 import { useSales } from "@/hooks/use-sales";
 import { useSettings } from "@/hooks/use-settings";
@@ -6,6 +6,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useRole } from "@/hooks/use-role";
 import { useTrial } from "@/hooks/use-trial";
+import { useNotifications } from "@/hooks/use-notifications";
 import { TrialBadge } from "@/components/TrialBadge";
 import { ProductList } from "@/components/ProductList";
 import { AddProductForm } from "@/components/AddProductForm";
