@@ -117,6 +117,10 @@ const translations: Record<string, Record<Language, string>> = {
   "trial_expired_contact": { fr: "Contactez-nous pour activer votre compte.", ht: "Kontakte nou pou aktive kont ou." },
   "trial_blocked_add": { fr: "Votre essai est terminé. Vous ne pouvez plus ajouter de produits.", ht: "Esè ou a fini. Ou pa ka ajoute pwodwi ankò." },
   "trial_blocked_sell": { fr: "Votre essai est terminé. Vous ne pouvez plus enregistrer de ventes.", ht: "Esè ou a fini. Ou pa ka anrejistre vant ankò." },
+  "report_pdf": { fr: "Télécharger PDF", ht: "Telechaje PDF" },
+  "report_pdf_success": { fr: "Rapport PDF téléchargé !", ht: "Rapò PDF telechaje !" },
+  "report_pdf_error": { fr: "Erreur lors de la génération du PDF", ht: "Erè nan jenerasyon PDF a" },
+  "synced": { fr: "Données synchronisées", ht: "Done sinkronize" },
 };
 
 export function useSettings() {
