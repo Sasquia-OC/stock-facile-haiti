@@ -281,7 +281,20 @@ const Index = () => {
 
         {/* ── HISTORY TAB ── */}
         {activeTab === "history" && (
-          <SalesHistory sales={sales} t={t} />
+          <>
+            <SalesHistory sales={sales} t={t} />
+            {isOwner && (
+              <ReportPdf
+                products={products}
+                sales={sales}
+                capitalInvesti={capitalInvesti}
+                valeurStock={valeurStock}
+                beneficeEstime={beneficeEstime}
+                t={t}
+                toUSD={toUSD}
+              />
+            )}
+          </>
         )}
       </main>
 
@@ -295,6 +308,9 @@ const Index = () => {
       {showReports && isOwner && (
         <ReportSection sales={sales} t={t} toUSD={toUSD} onClose={() => setShowReports(false)} />
       )}
+
+      {/* AI Chat Panel - floating */}
+      <AiChatPanel products={products} sales={sales} language={settings.language} t={t} />
     </div>
   );
 };
