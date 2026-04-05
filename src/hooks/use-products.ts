@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Product } from "@/types/product";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { offlineAwareOperation } from "@/hooks/use-offline-sync";
 
 export function useProducts() {
   const { user } = useAuth();
@@ -33,14 +34,31 @@ export function useProducts() {
 
   const addProduct = async (product: Omit<Product, "id" | "dateAjout">) => {
     if (!user) return;
-    const { data, error } = await supabase.from("products").insert({
+    const dbData = {
       user_id: user.id,
       nom: product.nom,
       quantite: product.quantite,
       prix_achat: product.prixAchat,
       prix_vente: product.prixVente,
       seuil_alerte: product.seuilAlerte,
-    }).select().single();
+    };
+
+    // If offline, queue and add optimistically
+    const handled = await offlineAwareOperation("products", "insert", dbData);
+    if (handled) {
+      setProducts((prev) => [{
+        id: crypto.randomUUID(),
+        nom: product.nom,
+        quantite: product.quantite,
+        prixAchat: product.prixAchat,
+        prixVente: product.prixVente,
+        seuilAlerte: product.seuilAlerte,
+        dateAjout: new Date().toISOString(),
+      }, ...prev]);
+      return;
+    }
+
+    const { data, error } = await supabase.from("products").insert(dbData).select().single();
     if (!error && data) {
       setProducts((prev) => [{
         id: data.id,
@@ -62,9 +80,16 @@ export function useProducts() {
     if (updates.prixVente !== undefined) dbUpdates.prix_vente = updates.prixVente;
     if (updates.seuilAlerte !== undefined) dbUpdates.seuil_alerte = updates.seuilAlerte;
 
+    // Optimistic update
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+
+    const handled = await offlineAwareOperation("products", "update", { id, ...dbUpdates });
+    if (handled) return;
+
     const { error } = await supabase.from("products").update(dbUpdates).eq("id", id);
-    if (!error) {
-      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+    if (error) {
+      // Revert on error - refetch
+      fetchProducts();
     }
   };
 

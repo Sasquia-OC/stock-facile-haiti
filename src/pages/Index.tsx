@@ -15,12 +15,15 @@ import { SearchBar } from "@/components/SearchBar";
 import { SalesModule } from "@/components/SalesModule";
 import { SalesHistory } from "@/components/SalesHistory";
 import { AiAssistant } from "@/components/AiAssistant";
+import { AiChatPanel } from "@/components/AiChatPanel";
 import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { HeaderMenu } from "@/components/HeaderMenu";
 import { ReportSection } from "@/components/ReportSection";
+import { ReportPdf } from "@/components/ReportPdf";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
+import { useOfflineSync } from "@/hooks/use-offline-sync";
 import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 
@@ -41,6 +44,7 @@ const Index = () => {
   const { isOwner } = useRole();
   const trial = useTrial();
   const { notifyLowStock, notifyStockout, notifyTrial } = useNotifications();
+  useOfflineSync(() => { /* Will auto-refresh via Supabase subscriptions */ });
 
   const [search, setSearch] = useState("");
   const prevCritiquesRef = useRef<Set<string>>(new Set());
@@ -277,7 +281,20 @@ const Index = () => {
 
         {/* ── HISTORY TAB ── */}
         {activeTab === "history" && (
-          <SalesHistory sales={sales} t={t} />
+          <>
+            <SalesHistory sales={sales} t={t} />
+            {isOwner && (
+              <ReportPdf
+                products={products}
+                sales={sales}
+                capitalInvesti={capitalInvesti}
+                valeurStock={valeurStock}
+                beneficeEstime={beneficeEstime}
+                t={t}
+                toUSD={toUSD}
+              />
+            )}
+          </>
         )}
       </main>
 
@@ -291,6 +308,9 @@ const Index = () => {
       {showReports && isOwner && (
         <ReportSection sales={sales} t={t} toUSD={toUSD} onClose={() => setShowReports(false)} />
       )}
+
+      {/* AI Chat Panel - floating */}
+      <AiChatPanel products={products} sales={sales} language={settings.language} t={t} />
     </div>
   );
 };
