@@ -61,6 +61,8 @@ export function QuickSellDialog({ product, onSale, onUpdateStock, t }: QuickSell
       icon: <CheckCircle className="h-4 w-4 text-success" />,
     });
 
+    notifySale(product.nom, total);
+
     if (monnaie > 0) {
       toast.info(`${t("change")}: ${monnaie.toLocaleString("fr-HT")} HTG`);
     }
