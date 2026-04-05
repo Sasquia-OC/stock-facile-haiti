@@ -30,6 +30,7 @@ interface QuickSellDialogProps {
 }
 
 export function QuickSellDialog({ product, onSale, onUpdateStock, t }: QuickSellDialogProps) {
+  const { notifySale } = useNotifications();
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState("1");
   const [montantRecu, setMontantRecu] = useState("");
