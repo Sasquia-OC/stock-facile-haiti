@@ -40,8 +40,29 @@ const Index = () => {
   const { signOut } = useAuth();
   const { isOwner } = useRole();
   const trial = useTrial();
+  const { notifyLowStock, notifyStockout, notifyTrial } = useNotifications();
 
   const [search, setSearch] = useState("");
+  const prevCritiquesRef = useRef<Set<string>>(new Set());
+
+  // Notify on new critical stock products
+  useEffect(() => {
+    const prevIds = prevCritiquesRef.current;
+    critiques.forEach((p) => {
+      if (!prevIds.has(p.id)) {
+        if (p.quantite === 0) notifyStockout(p.nom);
+        else notifyLowStock(p.nom, p.quantite);
+      }
+    });
+    prevCritiquesRef.current = new Set(critiques.map((p) => p.id));
+  }, [critiques, notifyLowStock, notifyStockout]);
+
+  // Notify on trial expiration warning
+  useEffect(() => {
+    if (trial.daysLeft !== null && (trial.daysLeft === 15 || trial.daysLeft === 3 || trial.daysLeft === 1)) {
+      notifyTrial(trial.daysLeft);
+    }
+  }, [trial.daysLeft, notifyTrial]);
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
   const [showReports, setShowReports] = useState(false);
 
