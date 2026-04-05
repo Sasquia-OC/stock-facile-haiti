@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShoppingCart, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useNotifications } from "@/hooks/use-notifications";
 
 interface QuickSellDialogProps {
   product: Product;
@@ -29,6 +30,7 @@ interface QuickSellDialogProps {
 }
 
 export function QuickSellDialog({ product, onSale, onUpdateStock, t }: QuickSellDialogProps) {
+  const { notifySale } = useNotifications();
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState("1");
   const [montantRecu, setMontantRecu] = useState("");
@@ -58,6 +60,8 @@ export function QuickSellDialog({ product, onSale, onUpdateStock, t }: QuickSell
     toast.success(t("sale_success"), {
       icon: <CheckCircle className="h-4 w-4 text-success" />,
     });
+
+    notifySale(product.nom, total);
 
     if (monnaie > 0) {
       toast.info(`${t("change")}: ${monnaie.toLocaleString("fr-HT")} HTG`);
