@@ -71,6 +71,12 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
   const [showReports, setShowReports] = useState(false);
 
+  // Use manual capital if set, otherwise computed from products
+  const capitalEffectif = settings.capitalManuel !== undefined && settings.capitalManuel > 0
+    ? settings.capitalManuel
+    : capitalInvesti;
+  const beneficeEffectif = valeurStock - capitalEffectif;
+
   const filteredStats = useMemo(() => {
     if (!search.trim()) return productStats;
     const q = search.toLowerCase();
