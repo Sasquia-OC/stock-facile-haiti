@@ -38,7 +38,7 @@ const Index = () => {
   } = useProducts();
 
   const { sales, addSale, gainsDuJour, clientsDuJour } = useSales();
-  const { settings, t, setLanguage, setTauxDollar, toUSD } = useSettings();
+  const { settings, t, setLanguage, setTauxDollar, setCapitalManuel, toUSD } = useSettings();
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
   const { isOwner } = useRole();
