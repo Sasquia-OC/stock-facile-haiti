@@ -20,7 +20,7 @@ import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { HeaderMenu } from "@/components/HeaderMenu";
 import { ReportSection } from "@/components/ReportSection";
-import { ReportPdf } from "@/components/ReportPdf";
+
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
 import { useOfflineSync } from "@/hooks/use-offline-sync";
