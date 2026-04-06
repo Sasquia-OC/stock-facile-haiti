@@ -331,9 +331,9 @@ const Index = () => {
         <ReportSection
           products={products}
           sales={sales}
-          capitalInvesti={capitalInvesti}
+          capitalInvesti={capitalEffectif}
           valeurStock={valeurStock}
-          beneficeEstime={beneficeEstime}
+          beneficeEstime={beneficeEffectif}
           t={t}
           toUSD={toUSD}
           onClose={() => setShowReports(false)}
