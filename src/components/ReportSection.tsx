@@ -1,12 +1,17 @@
 import { useState, useMemo } from "react";
-import { Sale } from "@/types/product";
+import { Product, Sale } from "@/types/product";
 import { X, Calendar, TrendingUp, ShoppingCart, Package, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ReportPdf } from "@/components/ReportPdf";
 
 type ReportPeriod = "daily" | "weekly" | "monthly" | "yearly";
 
 interface ReportSectionProps {
+  products: Product[];
   sales: Sale[];
+  capitalInvesti: number;
+  valeurStock: number;
+  beneficeEstime: number;
   t: (key: string) => string;
   toUSD: (htg: number) => number;
   onClose: () => void;
@@ -34,7 +39,7 @@ function getDateRange(period: ReportPeriod): Date {
   }
 }
 
-export function ReportSection({ sales, t, toUSD, onClose }: ReportSectionProps) {
+export function ReportSection({ products, sales, capitalInvesti, valeurStock, beneficeEstime, t, toUSD, onClose }: ReportSectionProps) {
   const [period, setPeriod] = useState<ReportPeriod>("daily");
 
   const periods: { id: ReportPeriod; labelKey: string }[] = [
@@ -78,9 +83,20 @@ export function ReportSection({ sales, t, toUSD, onClose }: ReportSectionProps) 
             <Calendar className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-bold">{t("reports")}</h2>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ReportPdf
+              products={products}
+              sales={sales}
+              capitalInvesti={capitalInvesti}
+              valeurStock={valeurStock}
+              beneficeEstime={beneficeEstime}
+              t={t}
+              toUSD={toUSD}
+            />
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Period tabs */}

@@ -20,11 +20,12 @@ import { FeedbackSection } from "@/components/FeedbackSection";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { HeaderMenu } from "@/components/HeaderMenu";
 import { ReportSection } from "@/components/ReportSection";
-import { ReportPdf } from "@/components/ReportPdf";
+
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
 import { useOfflineSync } from "@/hooks/use-offline-sync";
-import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye, Pencil } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 
 function formatHTG(amount: number) {
@@ -38,7 +39,7 @@ const Index = () => {
   } = useProducts();
 
   const { sales, addSale, gainsDuJour, clientsDuJour } = useSales();
-  const { settings, t, setLanguage, setTauxDollar, toUSD } = useSettings();
+  const { settings, t, setLanguage, setTauxDollar, setCapitalManuel, toUSD } = useSettings();
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
   const { isOwner } = useRole();
@@ -69,6 +70,12 @@ const Index = () => {
   }, [trial.daysRemaining, notifyTrial]);
   const [activeTab, setActiveTab] = useState<TabId>(isOwner ? "dashboard" : "stock");
   const [showReports, setShowReports] = useState(false);
+
+  // Use manual capital if set, otherwise computed from products
+  const capitalEffectif = settings.capitalManuel !== undefined && settings.capitalManuel > 0
+    ? settings.capitalManuel
+    : capitalInvesti;
+  const beneficeEffectif = valeurStock - capitalEffectif;
 
   const filteredStats = useMemo(() => {
     if (!search.trim()) return productStats;
@@ -148,8 +155,36 @@ const Index = () => {
 
             {/* Finances */}
             <div className="space-y-3">
+              {/* Capital investi - saisie manuelle */}
+              <div className="rounded-xl bg-card border p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="rounded-lg bg-secondary p-2.5">
+                    <DollarSign className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground">{t("capital_manual")}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder={t("capital_manual_placeholder")}
+                        value={settings.capitalManuel ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCapitalManuel(val === "" ? undefined : Number(val));
+                        }}
+                        className="h-8 text-sm font-bold"
+                      />
+                      <span className="text-xs text-muted-foreground shrink-0">HTG</span>
+                    </div>
+                    {settings.capitalManuel !== undefined && settings.capitalManuel > 0 && (
+                      <p className="text-[10px] text-muted-foreground mt-1">~${toUSD(settings.capitalManuel).toFixed(2)}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <FinanceCard icon={DollarSign} label={t("capital_invested")} value={capitalInvesti} toUSD={toUSD} />
                 <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
                   <div className="rounded-lg bg-secondary p-2.5">
                     <Package className="h-5 w-5 text-muted-foreground" />
@@ -165,15 +200,15 @@ const Index = () => {
                 </div>
               </div>
               <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
-                <div className={`rounded-lg p-2.5 ${beneficeEstime >= 0 ? "bg-success/10" : "bg-destructive/10"}`}>
-                  <TrendingUp className={`h-5 w-5 ${beneficeEstime >= 0 ? "text-success" : "text-destructive"}`} />
+                <div className={`rounded-lg p-2.5 ${beneficeEffectif >= 0 ? "bg-success/10" : "bg-destructive/10"}`}>
+                  <TrendingUp className={`h-5 w-5 ${beneficeEffectif >= 0 ? "text-success" : "text-destructive"}`} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{t("estimated_profit")}</p>
-                  <p className={`text-lg font-bold ${beneficeEstime >= 0 ? "text-success" : "text-destructive"}`}>
-                    {formatHTG(beneficeEstime)}
+                  <p className={`text-lg font-bold ${beneficeEffectif >= 0 ? "text-success" : "text-destructive"}`}>
+                    {formatHTG(beneficeEffectif)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">~${toUSD(beneficeEstime).toFixed(2)}</p>
+                  <p className="text-[10px] text-muted-foreground">~${toUSD(beneficeEffectif).toFixed(2)}</p>
                 </div>
               </div>
             </div>
@@ -281,20 +316,7 @@ const Index = () => {
 
         {/* ── HISTORY TAB ── */}
         {activeTab === "history" && (
-          <>
-            <SalesHistory sales={sales} t={t} />
-            {isOwner && (
-              <ReportPdf
-                products={products}
-                sales={sales}
-                capitalInvesti={capitalInvesti}
-                valeurStock={valeurStock}
-                beneficeEstime={beneficeEstime}
-                t={t}
-                toUSD={toUSD}
-              />
-            )}
-          </>
+          <SalesHistory sales={sales} t={t} />
         )}
       </main>
 
@@ -306,7 +328,16 @@ const Index = () => {
       <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} isOwner={isOwner} />
 
       {showReports && isOwner && (
-        <ReportSection sales={sales} t={t} toUSD={toUSD} onClose={() => setShowReports(false)} />
+        <ReportSection
+          products={products}
+          sales={sales}
+          capitalInvesti={capitalEffectif}
+          valeurStock={valeurStock}
+          beneficeEstime={beneficeEffectif}
+          t={t}
+          toUSD={toUSD}
+          onClose={() => setShowReports(false)}
+        />
       )}
 
       {/* AI Chat Panel - floating */}

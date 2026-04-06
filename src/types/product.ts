@@ -25,4 +25,5 @@ export type Language = "fr" | "ht";
 export interface AppSettings {
   language: Language;
   tauxDollar: number; // HTG per 1 USD
+  capitalManuel?: number; // Manual capital invested amount
 }
