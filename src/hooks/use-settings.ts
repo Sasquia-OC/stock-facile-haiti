@@ -72,6 +72,7 @@ const translations: Record<string, Record<Language, string>> = {
   "details": { fr: "Détails", ht: "Detay" },
   "delete": { fr: "Supprimer", ht: "Efase" },
   "auth_welcome_title": { fr: "Bienvenue sur Ayiti Biznis", ht: "Byenvini sou Ayiti Biznis" },
+  "auth_page_title": { fr: "Accéder à Ayiti Biznis", ht: "Antre nan Ayiti Biznis" },
   "auth_welcome_desc": { fr: "Gérez votre commerce — stock, ventes et bénéfices.", ht: "Jere komès ou pi byen — stòk, vant ak benefis." },
   "auth_login_title": { fr: "Connexion", ht: "Konekte" },
   "auth_signup_title": { fr: "Créer un compte", ht: "Kreye yon kont" },

@@ -110,7 +110,7 @@ export default function Auth() {
               className="text-2xl font-bold text-white tracking-tight animate-fade-in"
               style={{ animationDelay: "0.3s", animationFillMode: "both" }}
             >
-              {t("auth_welcome_title")}
+              {t("auth_page_title")}
             </h2>
             <p
               className="text-sm text-white/80 animate-fade-in"
