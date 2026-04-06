@@ -83,9 +83,20 @@ export function ReportSection({ products, sales, capitalInvesti, valeurStock, be
             <Calendar className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-bold">{t("reports")}</h2>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ReportPdf
+              products={products}
+              sales={sales}
+              capitalInvesti={capitalInvesti}
+              valeurStock={valeurStock}
+              beneficeEstime={beneficeEstime}
+              t={t}
+              toUSD={toUSD}
+            />
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Period tabs */}
