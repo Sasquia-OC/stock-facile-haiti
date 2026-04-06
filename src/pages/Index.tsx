@@ -24,7 +24,8 @@ import { ReportSection } from "@/components/ReportSection";
 import { BottomNav, TabId } from "@/components/BottomNav";
 import { StockSparkline } from "@/components/StockSparkline";
 import { useOfflineSync } from "@/hooks/use-offline-sync";
-import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye } from "lucide-react";
+import { DollarSign, Package, TrendingUp, ShoppingCart, Users, Star, Eye, Pencil } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import logoBiznisPam from "@/assets/logo-biznis-pam.png";
 
 function formatHTG(amount: number) {
