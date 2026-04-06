@@ -293,7 +293,16 @@ const Index = () => {
       <BottomNav active={activeTab} onChange={setActiveTab} t={t} alertCount={critiques.length} isOwner={isOwner} />
 
       {showReports && isOwner && (
-        <ReportSection sales={sales} t={t} toUSD={toUSD} onClose={() => setShowReports(false)} />
+        <ReportSection
+          products={products}
+          sales={sales}
+          capitalInvesti={capitalInvesti}
+          valeurStock={valeurStock}
+          beneficeEstime={beneficeEstime}
+          t={t}
+          toUSD={toUSD}
+          onClose={() => setShowReports(false)}
+        />
       )}
 
       {/* AI Chat Panel - floating */}
