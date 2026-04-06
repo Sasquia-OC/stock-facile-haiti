@@ -200,15 +200,15 @@ const Index = () => {
                 </div>
               </div>
               <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
-                <div className={`rounded-lg p-2.5 ${beneficeEstime >= 0 ? "bg-success/10" : "bg-destructive/10"}`}>
-                  <TrendingUp className={`h-5 w-5 ${beneficeEstime >= 0 ? "text-success" : "text-destructive"}`} />
+                <div className={`rounded-lg p-2.5 ${beneficeEffectif >= 0 ? "bg-success/10" : "bg-destructive/10"}`}>
+                  <TrendingUp className={`h-5 w-5 ${beneficeEffectif >= 0 ? "text-success" : "text-destructive"}`} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{t("estimated_profit")}</p>
-                  <p className={`text-lg font-bold ${beneficeEstime >= 0 ? "text-success" : "text-destructive"}`}>
-                    {formatHTG(beneficeEstime)}
+                  <p className={`text-lg font-bold ${beneficeEffectif >= 0 ? "text-success" : "text-destructive"}`}>
+                    {formatHTG(beneficeEffectif)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">~${toUSD(beneficeEstime).toFixed(2)}</p>
+                  <p className="text-[10px] text-muted-foreground">~${toUSD(beneficeEffectif).toFixed(2)}</p>
                 </div>
               </div>
             </div>
