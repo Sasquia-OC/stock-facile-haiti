@@ -39,7 +39,7 @@ function getDateRange(period: ReportPeriod): Date {
   }
 }
 
-export function ReportSection({ sales, t, toUSD, onClose }: ReportSectionProps) {
+export function ReportSection({ products, sales, capitalInvesti, valeurStock, beneficeEstime, t, toUSD, onClose }: ReportSectionProps) {
   const [period, setPeriod] = useState<ReportPeriod>("daily");
 
   const periods: { id: ReportPeriod; labelKey: string }[] = [
