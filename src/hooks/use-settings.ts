@@ -145,9 +145,10 @@ export function useSettings() {
 
   const setLanguage = (lang: Language) => setSettings((s) => ({ ...s, language: lang }));
   const setTauxDollar = (taux: number) => setSettings((s) => ({ ...s, tauxDollar: taux }));
+  const setCapitalManuel = (capital: number | undefined) => setSettings((s) => ({ ...s, capitalManuel: capital }));
 
   const toUSD = (htg: number) => htg / settings.tauxDollar;
   const toHTG = (usd: number) => usd * settings.tauxDollar;
 
-  return { settings, t, setLanguage, setTauxDollar, toUSD, toHTG };
+  return { settings, t, setLanguage, setTauxDollar, setCapitalManuel, toUSD, toHTG };
 }
