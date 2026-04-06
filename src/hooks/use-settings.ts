@@ -121,6 +121,8 @@ const translations: Record<string, Record<Language, string>> = {
   "report_pdf_success": { fr: "Rapport PDF téléchargé !", ht: "Rapò PDF telechaje !" },
   "report_pdf_error": { fr: "Erreur lors de la génération du PDF", ht: "Erè nan jenerasyon PDF a" },
   "synced": { fr: "Données synchronisées", ht: "Done sinkronize" },
+  "capital_manual": { fr: "Capital investi (saisie manuelle)", ht: "Kapital envesti (antre manyèl)" },
+  "capital_manual_placeholder": { fr: "Entrez votre capital...", ht: "Antre kapital ou..." },
 };
 
 export function useSettings() {
