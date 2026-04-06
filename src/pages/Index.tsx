@@ -281,20 +281,7 @@ const Index = () => {
 
         {/* ── HISTORY TAB ── */}
         {activeTab === "history" && (
-          <>
-            <SalesHistory sales={sales} t={t} />
-            {isOwner && (
-              <ReportPdf
-                products={products}
-                sales={sales}
-                capitalInvesti={capitalInvesti}
-                valeurStock={valeurStock}
-                beneficeEstime={beneficeEstime}
-                t={t}
-                toUSD={toUSD}
-              />
-            )}
-          </>
+          <SalesHistory sales={sales} t={t} />
         )}
       </main>
 
