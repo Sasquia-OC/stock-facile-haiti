@@ -1,12 +1,17 @@
 import { useState, useMemo } from "react";
-import { Sale } from "@/types/product";
+import { Product, Sale } from "@/types/product";
 import { X, Calendar, TrendingUp, ShoppingCart, Package, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ReportPdf } from "@/components/ReportPdf";
 
 type ReportPeriod = "daily" | "weekly" | "monthly" | "yearly";
 
 interface ReportSectionProps {
+  products: Product[];
   sales: Sale[];
+  capitalInvesti: number;
+  valeurStock: number;
+  beneficeEstime: number;
   t: (key: string) => string;
   toUSD: (htg: number) => number;
   onClose: () => void;
