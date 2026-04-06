@@ -149,8 +149,36 @@ const Index = () => {
 
             {/* Finances */}
             <div className="space-y-3">
+              {/* Capital investi - saisie manuelle */}
+              <div className="rounded-xl bg-card border p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="rounded-lg bg-secondary p-2.5">
+                    <DollarSign className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground">{t("capital_manual")}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder={t("capital_manual_placeholder")}
+                        value={settings.capitalManuel ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCapitalManuel(val === "" ? undefined : Number(val));
+                        }}
+                        className="h-8 text-sm font-bold"
+                      />
+                      <span className="text-xs text-muted-foreground shrink-0">HTG</span>
+                    </div>
+                    {settings.capitalManuel !== undefined && settings.capitalManuel > 0 && (
+                      <p className="text-[10px] text-muted-foreground mt-1">~${toUSD(settings.capitalManuel).toFixed(2)}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <FinanceCard icon={DollarSign} label={t("capital_invested")} value={capitalInvesti} toUSD={toUSD} />
                 <div className="rounded-xl bg-card border p-4 flex items-center gap-3">
                   <div className="rounded-lg bg-secondary p-2.5">
                     <Package className="h-5 w-5 text-muted-foreground" />
