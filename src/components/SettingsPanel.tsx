@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Settings, X, Sun, Moon, Monitor, Globe } from "lucide-react";
-import { useState } from "react";
+import { Settings, X, Sun, Moon, Monitor, Globe, Database, Package, ShoppingCart, MessageCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Language } from "@/types/product";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Drawer,
   DrawerContent,
@@ -32,6 +33,24 @@ export function SettingsPanel({
   t,
 }: SettingsPanelProps) {
   const [open, setOpen] = useState(false);
+  const [storageCounts, setStorageCounts] = useState({ products: 0, sales: 0, conversations: 0 });
+
+  useEffect(() => {
+    if (!open) return;
+    const fetchCounts = async () => {
+      const [prodRes, salesRes, convRes] = await Promise.all([
+        supabase.from("products").select("id", { count: "exact", head: true }),
+        supabase.from("sales").select("id", { count: "exact", head: true }),
+        supabase.from("chat_conversations").select("id", { count: "exact", head: true }),
+      ]);
+      setStorageCounts({
+        products: prodRes.count ?? 0,
+        sales: salesRes.count ?? 0,
+        conversations: convRes.count ?? 0,
+      });
+    };
+    fetchCounts();
+  }, [open]);
 
   return (
     <>
@@ -117,6 +136,33 @@ export function SettingsPanel({
                 onChange={(e) => onTauxChange(Number(e.target.value) || 132)}
                 className="h-11"
               />
+            </div>
+
+            {/* Storage Usage */}
+            <div className="space-y-2">
+              <Label className="text-sm flex items-center gap-2">
+                <Database className="h-4 w-4" /> {t("storage_usage")}
+              </Label>
+              <div className="rounded-lg border bg-muted/50 p-3 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Package className="h-3.5 w-3.5" /> {t("storage_products")}
+                  </span>
+                  <span className="font-semibold">{storageCounts.products}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <ShoppingCart className="h-3.5 w-3.5" /> {t("storage_sales")}
+                  </span>
+                  <span className="font-semibold">{storageCounts.sales}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <MessageCircle className="h-3.5 w-3.5" /> {t("storage_conversations")}
+                  </span>
+                  <span className="font-semibold">{storageCounts.conversations}</span>
+                </div>
+              </div>
             </div>
 
             <Button onClick={() => setOpen(false)} className="w-full">

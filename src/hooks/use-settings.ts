@@ -124,6 +124,11 @@ const translations: Record<string, Record<Language, string>> = {
   "synced": { fr: "Données synchronisées", ht: "Done sinkronize" },
   "capital_manual": { fr: "Capital investi (saisie manuelle)", ht: "Kapital envesti (antre manyèl)" },
   "capital_manual_placeholder": { fr: "Entrez votre capital...", ht: "Antre kapital ou..." },
+  "storage_usage": { fr: "Espace de stockage", ht: "Espas estokaj" },
+  "storage_products": { fr: "Produits", ht: "Pwodwi" },
+  "storage_sales": { fr: "Ventes", ht: "Vant" },
+  "storage_conversations": { fr: "Conversations IA", ht: "Konvèsasyon IA" },
+  "capital_invested_product": { fr: "Capital investi", ht: "Kapital envesti" },
 };
 
 export function useSettings() {
