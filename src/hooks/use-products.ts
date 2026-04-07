@@ -55,6 +55,7 @@ export function useProducts() {
         prixAchat: product.prixAchat,
         prixVente: product.prixVente,
         seuilAlerte: product.seuilAlerte,
+        capitalInvesti: product.capitalInvesti ?? 0,
         dateAjout: new Date().toISOString(),
       }, ...prev]);
       return;
