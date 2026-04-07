@@ -70,6 +70,7 @@ export function useProducts() {
         prixAchat: Number(data.prix_achat),
         prixVente: Number(data.prix_vente),
         seuilAlerte: data.seuil_alerte,
+        capitalInvesti: Number((data as any).capital_investi ?? 0),
         dateAjout: data.created_at,
       }, ...prev]);
     }
