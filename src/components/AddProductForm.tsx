@@ -18,6 +18,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
   const [prixAchat, setPrixAchat] = useState("");
   const [prixVente, setPrixVente] = useState("");
   const [seuilAlerte, setSeuilAlerte] = useState("5");
+  const [capitalInvesti, setCapitalInvesti] = useState("");
 
   const reset = () => {
     setNom("");
@@ -25,6 +26,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
     setPrixAchat("");
     setPrixVente("");
     setSeuilAlerte("5");
+    setCapitalInvesti("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,6 +38,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
       prixAchat: Number(prixAchat),
       prixVente: Number(prixVente),
       seuilAlerte: Number(seuilAlerte) || 5,
+      capitalInvesti: Number(capitalInvesti) || 0,
     });
     toast.success(`"${nom.trim()}" ${t("added_to_stock")}`, {
       icon: <CheckCircle className="h-4 w-4 text-success" />,
@@ -84,6 +87,11 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
       <div>
         <Label htmlFor="seuil" className="text-sm">{t("alert_threshold")}</Label>
         <Input id="seuil" type="number" min="1" value={seuilAlerte} onChange={(e) => setSeuilAlerte(e.target.value)} placeholder="5" className="mt-1.5 h-11" />
+      </div>
+
+      <div>
+        <Label htmlFor="capitalInvesti" className="text-sm">{t("capital_invested")} (HTG)</Label>
+        <Input id="capitalInvesti" type="number" min="0" step="any" value={capitalInvesti} onChange={(e) => setCapitalInvesti(e.target.value)} placeholder="0" className="mt-1.5 h-11" />
       </div>
 
       <Button type="submit" className="w-full gap-2 h-12 text-base">

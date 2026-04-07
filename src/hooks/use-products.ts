@@ -24,6 +24,7 @@ export function useProducts() {
         prixAchat: Number(p.prix_achat),
         prixVente: Number(p.prix_vente),
         seuilAlerte: p.seuil_alerte,
+        capitalInvesti: Number((p as any).capital_investi ?? 0),
         dateAjout: p.created_at,
       })));
     }
@@ -34,13 +35,14 @@ export function useProducts() {
 
   const addProduct = async (product: Omit<Product, "id" | "dateAjout">) => {
     if (!user) return;
-    const dbData = {
+    const dbData: Record<string, any> = {
       user_id: user.id,
       nom: product.nom,
       quantite: product.quantite,
       prix_achat: product.prixAchat,
       prix_vente: product.prixVente,
       seuil_alerte: product.seuilAlerte,
+      capital_investi: product.capitalInvesti ?? 0,
     };
 
     // If offline, queue and add optimistically
@@ -53,12 +55,13 @@ export function useProducts() {
         prixAchat: product.prixAchat,
         prixVente: product.prixVente,
         seuilAlerte: product.seuilAlerte,
+        capitalInvesti: product.capitalInvesti ?? 0,
         dateAjout: new Date().toISOString(),
       }, ...prev]);
       return;
     }
 
-    const { data, error } = await supabase.from("products").insert(dbData).select().single();
+    const { data, error } = await supabase.from("products").insert(dbData as any).select().single();
     if (!error && data) {
       setProducts((prev) => [{
         id: data.id,
@@ -67,6 +70,7 @@ export function useProducts() {
         prixAchat: Number(data.prix_achat),
         prixVente: Number(data.prix_vente),
         seuilAlerte: data.seuil_alerte,
+        capitalInvesti: Number((data as any).capital_investi ?? 0),
         dateAjout: data.created_at,
       }, ...prev]);
     }
@@ -100,7 +104,10 @@ export function useProducts() {
     }
   };
 
-  const capitalInvesti = products.reduce((sum, p) => sum + p.prixAchat * p.quantite, 0);
+  const capitalInvesti = products.reduce((sum, p) => {
+    // Use capitalInvesti field if set, otherwise fallback to prixAchat * quantite
+    return sum + (p.capitalInvesti > 0 ? p.capitalInvesti : p.prixAchat * p.quantite);
+  }, 0);
   const valeurStock = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
   const beneficeEstime = valeurStock - capitalInvesti;
 
