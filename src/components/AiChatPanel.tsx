@@ -2,11 +2,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, X, Send, Mic, MicOff, Loader2, Bot, User } from "lucide-react";
+import { MessageCircle, X, Send, Mic, MicOff, Loader2, Bot, User, Calendar } from "lucide-react";
 import { Product, Sale } from "@/types/product";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -18,13 +19,91 @@ interface AiChatPanelProps {
 }
 
 export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyDates, setHistoryDates] = useState<{ id: string; chat_date: string }[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  // Load or create today's conversation when panel opens
+  useEffect(() => {
+    if (!open || !user) return;
+    loadTodayConversation();
+  }, [open, user]);
+
+  const loadTodayConversation = async () => {
+    if (!user) return;
+    const today = new Date().toISOString().split("T")[0];
+
+    // Try to find today's conversation
+    const { data: existing } = await supabase
+      .from("chat_conversations")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("chat_date", today)
+      .maybeSingle();
+
+    if (existing) {
+      setConversationId(existing.id);
+      // Load messages
+      const { data: msgs } = await supabase
+        .from("chat_messages")
+        .select("role, content")
+        .eq("conversation_id", existing.id)
+        .order("created_at", { ascending: true });
+      if (msgs) setMessages(msgs as Msg[]);
+    } else {
+      // Create new conversation
+      const { data: newConv } = await supabase
+        .from("chat_conversations")
+        .insert({ user_id: user.id, chat_date: today } as any)
+        .select("id")
+        .single();
+      if (newConv) {
+        setConversationId(newConv.id);
+        setMessages([]);
+      }
+    }
+  };
+
+  const loadHistoryDates = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("chat_conversations")
+      .select("id, chat_date")
+      .eq("user_id", user.id)
+      .order("chat_date", { ascending: false })
+      .limit(30);
+    if (data) setHistoryDates(data as any);
+    setShowHistory(true);
+  };
+
+  const loadConversation = async (convId: string) => {
+    setConversationId(convId);
+    const { data: msgs } = await supabase
+      .from("chat_messages")
+      .select("role, content")
+      .eq("conversation_id", convId)
+      .order("created_at", { ascending: true });
+    if (msgs) setMessages(msgs as Msg[]);
+    setShowHistory(false);
+  };
+
+  const saveMessage = async (role: string, content: string) => {
+    if (!conversationId || !user) return;
+    await supabase.from("chat_messages").insert({
+      conversation_id: conversationId,
+      user_id: user.id,
+      role,
+      content,
+    } as any);
+  };
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -48,12 +127,7 @@ export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) 
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({
-          messages: allMessages,
-          products,
-          sales,
-          language,
-        }),
+        body: JSON.stringify({ messages: allMessages, products, sales, language }),
       }
     );
 
@@ -123,7 +197,10 @@ export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) 
         } catch { /* ignore */ }
       }
     }
-  }, [products, sales, language, t]);
+
+    // Save assistant message to DB
+    if (content) await saveMessage("assistant", content);
+  }, [products, sales, language, t, conversationId, user]);
 
   const sendMessage = async (text?: string) => {
     const messageText = text || input.trim();
@@ -135,11 +212,13 @@ export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) 
     setInput("");
     setIsLoading(true);
 
+    // Save user message to DB
+    await saveMessage("user", messageText);
+
     try {
       await streamChat(updatedMessages);
     } catch (e: any) {
       toast.error(e.message || "Erreur");
-      // Remove user message if failed
       setMessages(prev => prev.filter((_, i) => i !== prev.length - 1));
     } finally {
       setIsLoading(false);
@@ -167,9 +246,7 @@ export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) 
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      if (transcript) {
-        sendMessage(transcript);
-      }
+      if (transcript) sendMessage(transcript);
       setIsListening(false);
     };
 
@@ -207,110 +284,152 @@ export function AiChatPanel({ products, sales, language, t }: AiChatPanelProps) 
             {language === "ht" ? "Asistan IA" : "Assistant IA"}
           </span>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20" onClick={() => setOpen(false)}>
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20" onClick={loadHistoryDates}>
+            <Calendar className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20" onClick={() => { setOpen(false); setShowHistory(false); }}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Messages */}
-      <ScrollArea className="flex-1 px-4 py-3" ref={scrollRef}>
-        {messages.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm py-12 space-y-2">
-            <Bot className="h-10 w-10 mx-auto text-primary/40" />
-            <p>{language === "ht" ? "Kijan mwen ka ede ou jodi a?" : "Comment puis-je vous aider ?"}</p>
-            <div className="flex flex-wrap gap-2 justify-center mt-4">
-              {[
-                language === "ht" ? "Ki pwodwi ki pi rentab?" : "Quel produit est le plus rentable ?",
-                language === "ht" ? "Ki pwodwi mwen dwe kòmande?" : "Que dois-je commander ?",
-                language === "ht" ? "Kijan vant mwen ye?" : "Comment vont mes ventes ?",
-              ].map((q) => (
-                <button
-                  key={q}
-                  className="text-xs px-3 py-1.5 rounded-full border bg-card hover:bg-accent transition-colors text-left"
-                  onClick={() => sendMessage(q)}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+      {/* History View */}
+      {showHistory ? (
+        <ScrollArea className="flex-1 px-4 py-3">
+          <div className="space-y-2">
+            <Button variant="outline" size="sm" className="w-full mb-2" onClick={() => { setShowHistory(false); loadTodayConversation(); }}>
+              {language === "ht" ? "Retounen jodi a" : "Retour à aujourd'hui"}
+            </Button>
+            {historyDates.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {language === "ht" ? "Pa gen istorik" : "Aucun historique"}
+              </p>
+            )}
+            {historyDates.map((conv) => (
+              <button
+                key={conv.id}
+                className="w-full text-left px-4 py-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                onClick={() => loadConversation(conv.id)}
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    {new Date(conv.chat_date + "T00:00:00").toLocaleDateString(language === "ht" ? "fr-HT" : "fr-FR", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+              </button>
+            ))}
           </div>
-        )}
-        <div className="space-y-4">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-              {msg.role === "assistant" && (
-                <div className="shrink-0 h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                  <Bot className="h-4 w-4 text-primary" />
+        </ScrollArea>
+      ) : (
+        <>
+          {/* Messages */}
+          <ScrollArea className="flex-1 px-4 py-3" ref={scrollRef}>
+            {messages.length === 0 && (
+              <div className="text-center text-muted-foreground text-sm py-12 space-y-2">
+                <Bot className="h-10 w-10 mx-auto text-primary/40" />
+                <p>{language === "ht" ? "Kijan mwen ka ede ou jodi a?" : "Comment puis-je vous aider ?"}</p>
+                <div className="flex flex-wrap gap-2 justify-center mt-4">
+                  {[
+                    language === "ht" ? "Ki pwodwi ki pi rentab?" : "Quel produit est le plus rentable ?",
+                    language === "ht" ? "Ki pwodwi mwen dwe kòmande?" : "Que dois-je commander ?",
+                    language === "ht" ? "Kijan vant mwen ye?" : "Comment vont mes ventes ?",
+                  ].map((q) => (
+                    <button
+                      key={q}
+                      className="text-xs px-3 py-1.5 rounded-full border bg-card hover:bg-accent transition-colors text-left"
+                      onClick={() => sendMessage(q)}
+                    >
+                      {q}
+                    </button>
+                  ))}
                 </div>
-              )}
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-muted rounded-bl-md"
-              }`}>
-                {msg.role === "assistant" ? (
-                  <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
+            )}
+            <div className="space-y-4">
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {msg.role === "assistant" && (
+                    <div className="shrink-0 h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
+                      <Bot className="h-4 w-4 text-primary" />
+                    </div>
+                  )}
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-br-md"
+                      : "bg-muted rounded-bl-md"
+                  }`}>
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p>{msg.content}</p>
+                    )}
                   </div>
-                ) : (
-                  <p>{msg.content}</p>
-                )}
-              </div>
-              {msg.role === "user" && (
-                <div className="shrink-0 h-7 w-7 rounded-full bg-primary flex items-center justify-center mt-0.5">
-                  <User className="h-4 w-4 text-primary-foreground" />
+                  {msg.role === "user" && (
+                    <div className="shrink-0 h-7 w-7 rounded-full bg-primary flex items-center justify-center mt-0.5">
+                      <User className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                  )}
+                </div>
+              ))}
+              {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+                <div className="flex gap-2">
+                  <div className="shrink-0 h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Bot className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
                 </div>
               )}
             </div>
-          ))}
-          {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-            <div className="flex gap-2">
-              <div className="shrink-0 h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-primary" />
-              </div>
-              <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+          </ScrollArea>
 
-      {/* Input */}
-      <div className="px-3 py-3 border-t bg-card sm:rounded-b-2xl">
-        <div className="flex gap-2">
-          <Button
-            variant={isListening ? "destructive" : "outline"}
-            size="icon"
-            className="shrink-0 h-10 w-10"
-            onClick={toggleVoice}
-            disabled={isLoading}
-          >
-            {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-          </Button>
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-            placeholder={language === "ht" ? "Ekri mesaj ou..." : "Écrivez votre message..."}
-            className="h-10 text-sm"
-            disabled={isLoading}
-          />
-          <Button
-            size="icon"
-            className="shrink-0 h-10 w-10"
-            onClick={() => sendMessage()}
-            disabled={!input.trim() || isLoading}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-        {isListening && (
-          <p className="text-xs text-destructive text-center mt-2 animate-pulse">
-            {language === "ht" ? "Ap koute..." : "Écoute en cours..."}
-          </p>
-        )}
-      </div>
+          {/* Input */}
+          <div className="px-3 py-3 border-t bg-card sm:rounded-b-2xl">
+            <div className="flex gap-2">
+              <Button
+                variant={isListening ? "destructive" : "outline"}
+                size="icon"
+                className="shrink-0 h-10 w-10"
+                onClick={toggleVoice}
+                disabled={isLoading}
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                placeholder={language === "ht" ? "Ekri mesaj ou..." : "Écrivez votre message..."}
+                className="h-10 text-sm"
+                disabled={isLoading}
+              />
+              <Button
+                size="icon"
+                className="shrink-0 h-10 w-10"
+                onClick={() => sendMessage()}
+                disabled={!input.trim() || isLoading}
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+            {isListening && (
+              <p className="text-xs text-destructive text-center mt-2 animate-pulse">
+                {language === "ht" ? "Ap koute..." : "Écoute en cours..."}
+              </p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
