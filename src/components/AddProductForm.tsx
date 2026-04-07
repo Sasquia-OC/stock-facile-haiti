@@ -89,6 +89,11 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
         <Input id="seuil" type="number" min="1" value={seuilAlerte} onChange={(e) => setSeuilAlerte(e.target.value)} placeholder="5" className="mt-1.5 h-11" />
       </div>
 
+      <div>
+        <Label htmlFor="capitalInvesti" className="text-sm">{t("capital_invested")} (HTG)</Label>
+        <Input id="capitalInvesti" type="number" min="0" step="any" value={capitalInvesti} onChange={(e) => setCapitalInvesti(e.target.value)} placeholder="0" className="mt-1.5 h-11" />
+      </div>
+
       <Button type="submit" className="w-full gap-2 h-12 text-base">
         <Plus className="h-5 w-5" /> {t("add")}
       </Button>

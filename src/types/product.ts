@@ -5,6 +5,7 @@ export interface Product {
   prixAchat: number;
   prixVente: number;
   seuilAlerte: number;
+  capitalInvesti: number;
   dateAjout: string;
 }
 
