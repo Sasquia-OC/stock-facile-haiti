@@ -104,7 +104,10 @@ export function useProducts() {
     }
   };
 
-  const capitalInvesti = products.reduce((sum, p) => sum + p.prixAchat * p.quantite, 0);
+  const capitalInvesti = products.reduce((sum, p) => {
+    // Use capitalInvesti field if set, otherwise fallback to prixAchat * quantite
+    return sum + (p.capitalInvesti > 0 ? p.capitalInvesti : p.prixAchat * p.quantite);
+  }, 0);
   const valeurStock = products.reduce((sum, p) => sum + p.prixVente * p.quantite, 0);
   const beneficeEstime = valeurStock - capitalInvesti;
 
