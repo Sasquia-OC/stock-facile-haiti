@@ -35,13 +35,14 @@ export function useProducts() {
 
   const addProduct = async (product: Omit<Product, "id" | "dateAjout">) => {
     if (!user) return;
-    const dbData = {
+    const dbData: Record<string, any> = {
       user_id: user.id,
       nom: product.nom,
       quantite: product.quantite,
       prix_achat: product.prixAchat,
       prix_vente: product.prixVente,
       seuil_alerte: product.seuilAlerte,
+      capital_investi: product.capitalInvesti ?? 0,
     };
 
     // If offline, queue and add optimistically
