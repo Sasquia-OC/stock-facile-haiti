@@ -38,6 +38,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
       prixAchat: Number(prixAchat),
       prixVente: Number(prixVente),
       seuilAlerte: Number(seuilAlerte) || 5,
+      capitalInvesti: Number(capitalInvesti) || 0,
     });
     toast.success(`"${nom.trim()}" ${t("added_to_stock")}`, {
       icon: <CheckCircle className="h-4 w-4 text-success" />,
