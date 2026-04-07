@@ -24,6 +24,7 @@ export function useProducts() {
         prixAchat: Number(p.prix_achat),
         prixVente: Number(p.prix_vente),
         seuilAlerte: p.seuil_alerte,
+        capitalInvesti: Number((p as any).capital_investi ?? 0),
         dateAjout: p.created_at,
       })));
     }
