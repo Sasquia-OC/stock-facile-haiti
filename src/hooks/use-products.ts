@@ -61,7 +61,7 @@ export function useProducts() {
       return;
     }
 
-    const { data, error } = await supabase.from("products").insert(dbData).select().single();
+    const { data, error } = await supabase.from("products").insert(dbData as any).select().single();
     if (!error && data) {
       setProducts((prev) => [{
         id: data.id,
