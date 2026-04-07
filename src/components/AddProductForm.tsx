@@ -18,6 +18,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
   const [prixAchat, setPrixAchat] = useState("");
   const [prixVente, setPrixVente] = useState("");
   const [seuilAlerte, setSeuilAlerte] = useState("5");
+  const [capitalInvesti, setCapitalInvesti] = useState("");
 
   const reset = () => {
     setNom("");
@@ -25,6 +26,7 @@ export function AddProductForm({ onAdd, t }: AddProductFormProps) {
     setPrixAchat("");
     setPrixVente("");
     setSeuilAlerte("5");
+    setCapitalInvesti("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
