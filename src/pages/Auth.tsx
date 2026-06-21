@@ -87,9 +87,9 @@ export default function Auth() {
         {settings.language === "fr" ? "Kreyòl" : "Français"}
       </button>
 
-      {/* Bannière de bienvenue — avec animation d'entrée */}
-      <div className="w-full max-w-sm mb-6 rounded-2xl overflow-hidden shadow-xl animate-fade-in relative z-10">
-        <div className="relative bg-gradient-to-br from-primary via-[hsl(216,100%,22%)] to-destructive p-7 text-center overflow-hidden">
+      {/* Bannière de bienvenue — compacte */}
+      <div className="w-full max-w-sm mb-4 rounded-2xl overflow-hidden shadow-xl animate-fade-in relative z-10">
+        <div className="relative bg-gradient-to-br from-primary via-[hsl(216,100%,22%)] to-destructive p-4 text-center overflow-hidden">
           {/* Animated shimmer overlay */}
           <div className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_70%)]" />
           <div
@@ -99,21 +99,21 @@ export default function Auth() {
               animation: "shimmer 3s ease-in-out infinite",
             }}
           />
-          <div className="relative z-10 space-y-3">
+          <div className="relative z-10 space-y-2">
             <div
-              className="mx-auto w-fit rounded-2xl bg-white/95 p-4 shadow-lg animate-scale-in"
+              className="mx-auto w-fit rounded-xl bg-white/95 p-2.5 shadow-lg animate-scale-in"
               style={{ animationDelay: "0.2s", animationFillMode: "both" }}
             >
-              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-20 w-20 object-contain" />
+              <img src={logoBiznisPam} alt="Ayiti Biznis" className="h-12 w-12 object-contain" />
             </div>
             <h2
-              className="text-2xl font-bold text-white tracking-tight animate-fade-in"
+              className="text-lg font-bold text-white tracking-tight animate-fade-in"
               style={{ animationDelay: "0.3s", animationFillMode: "both" }}
             >
               {t("auth_page_title")}
             </h2>
             <p
-              className="text-sm text-white/80 animate-fade-in"
+              className="text-xs text-white/80 animate-fade-in"
               style={{ animationDelay: "0.4s", animationFillMode: "both" }}
             >
               {t("auth_welcome_desc")}
