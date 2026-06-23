@@ -1,4 +1,4 @@
-import logoBiznisPam from "@/assets/logo-biznis-pam.png";
+import logoBiznisPam from "@/assets/logo-biznis-pam.webp";
 import { useSettings } from "@/hooks/use-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
