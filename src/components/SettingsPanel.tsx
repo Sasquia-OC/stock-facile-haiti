@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
+import { EcoDashboard } from "@/components/EcoDashboard";
 
 interface SettingsPanelProps {
   language: Language;
@@ -164,6 +165,10 @@ export function SettingsPanel({
                 </div>
               </div>
             </div>
+
+            {/* Éco-performance */}
+            <EcoDashboard t={t} />
+
 
             <Button onClick={() => setOpen(false)} className="w-full">
               {t("close")}
