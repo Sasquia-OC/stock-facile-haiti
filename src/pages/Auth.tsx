@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2, Globe, Mail, Lock, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/use-settings";
-import logoBiznisPam from "@/assets/logo-biznis-pam.png";
+import logoBiznisPam from "@/assets/logo-biznis-pam.webp";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);

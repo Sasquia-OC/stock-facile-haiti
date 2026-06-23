@@ -71,4 +71,17 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Éco-conception : découpage en chunks pour réduire le poids initial
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "charts": ["recharts"],
+          "supabase": ["@supabase/supabase-js"],
+          "pdf": ["jspdf"],
+        },
+      },
+    },
+  },
 }));
