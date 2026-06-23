@@ -129,6 +129,12 @@ const translations: Record<string, Record<Language, string>> = {
   "storage_sales": { fr: "Ventes", ht: "Vant" },
   "storage_conversations": { fr: "Conversations IA", ht: "Konvèsasyon IA" },
   "capital_invested_product": { fr: "Capital investi", ht: "Kapital envesti" },
+  "eco_dashboard": { fr: "Éco-performance", ht: "Eko-pèfòmans" },
+  "eco_js_size": { fr: "Poids JS chargé", ht: "Pwa JS chaje" },
+  "eco_load_time": { fr: "Temps de chargement", ht: "Tan chajman" },
+  "eco_cache_rate": { fr: "Requêtes évitées (cache)", ht: "Demann evite (cache)" },
+  "eco_score": { fr: "Score éco", ht: "Nòt eko" },
+  "eco_hint": { fr: "Plus le score est élevé, moins l'app consomme.", ht: "Plis nòt la wo, mwens app la konsome." },
 };
 
 export function useSettings() {
