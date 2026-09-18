@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Settings, X, Sun, Moon, Monitor, Globe, Database, Package, ShoppingCart, MessageCircle } from "lucide-react";
+import { Settings, X, Sun, Moon, Monitor, Globe, Database, Package, ShoppingCart, MessageCircle, Crown } from "lucide-react";
+import { PlansSection } from "@/components/PlansSection";
 import { useState, useEffect } from "react";
 import { Language } from "@/types/product";
 import { supabase } from "@/integrations/supabase/client";
@@ -167,6 +168,14 @@ export function SettingsPanel({
             </div>
 
 
+
+            {/* Plans & abonnement */}
+            <div className="space-y-2">
+              <Label className="text-sm flex items-center gap-2">
+                <Crown className="h-4 w-4" /> {t("plans_title")}
+              </Label>
+              <PlansSection t={t} />
+            </div>
 
             <Button onClick={() => setOpen(false)} className="w-full">
               {t("close")}
