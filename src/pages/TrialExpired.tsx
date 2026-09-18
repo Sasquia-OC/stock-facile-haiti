@@ -3,6 +3,7 @@ import { useSettings } from "@/hooks/use-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Lock, LogOut } from "lucide-react";
+import { PlansSection } from "@/components/PlansSection";
 
 export default function TrialExpired() {
   const { t } = useSettings();
@@ -25,10 +26,9 @@ export default function TrialExpired() {
           </p>
         </div>
 
-        <div className="rounded-xl border bg-card p-4 space-y-3">
-          <p className="text-sm font-semibold">{t("trial_expired_cta")}</p>
-          <p className="text-xs text-muted-foreground">{t("trial_expired_contact")}</p>
-        </div>
+        <p className="text-sm font-semibold">{t("trial_expired_cta")}</p>
+        <PlansSection t={t} />
+        <p className="text-xs text-muted-foreground">{t("trial_expired_contact")}</p>
 
         <Button variant="outline" className="w-full gap-2" onClick={signOut}>
           <LogOut className="h-4 w-4" />
